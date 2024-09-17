@@ -1,0 +1,9 @@
+{
+  "extends": "@total-typescript/tsconfig/tsc/no-dom/library",
+  "compilerOptions": {
+    "outDir": "dist"
+  },
+  "files": [
+    "./src/index.ts"
+  ]
+}
