@@ -1,4 +1,4 @@
-export { inject, Container } from "./container.js";
+export { inject, Container, bootstrap } from "./container.js";
 export { injectable } from "./decorators.js";
 export type {
   FactoryProvider,

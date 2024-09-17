@@ -229,3 +229,7 @@ class SingletonMap extends Map<Token<unknown>, unknown> {
     return value;
   }
 }
+
+export function bootstrap<T>(token: Token<T>): T {
+  return new Container().get(token);
+}
