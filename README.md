@@ -20,7 +20,7 @@ A light-weight TypeScript-first library for dependency injection.
 A simple example using constructor injection:
 
 ```typescript
-import { injectable, inject } from '@dirklujk/needle-di';
+import { injectable, inject } from '@dirkluijk/needle-di';
 
 @injectable()
 class FooService {}
@@ -35,7 +35,7 @@ class BarService {
 
 By using the `@injectable` decorator, there is no need to register your services. Just create a new dependency injection container and request something by its token: 
 ```typescript
-import { Container } from '@dirklujk/needle-di';
+import { Container } from '@dirkluijk/needle-di';
 
 const container = new Container();
 const barService = container.get(BarService);
@@ -43,15 +43,19 @@ const barService = container.get(BarService);
 
 Or just:
 ```typescript
-import { bootstrap } from '@dirklujk/needle-di';
+import { bootstrap } from '@dirkluijk/needle-di';
 
 const barService = bootstrap(BarService);
 ```
 
+Check out the [advanced examples](#advanced-examples) below to learn more!
+
 ## Features
 
 * Constructor injection
-* Supports all kinds of tokens:
+* Three-shakable injection tokens
+* Auto-binding using decorators
+* Supports many kinds of tokens:
   * Any class reference
   * Any `string` or `symbol`
   * Any instance of `InjectionToken<T>` (for full type-safety)
@@ -60,6 +64,7 @@ const barService = bootstrap(BarService);
   * Static values
   * Dynamic factories
   * Async factories
+* Inheritance support
 
 ## Limitations
 
@@ -75,12 +80,12 @@ However, if you prefer a light-weight library that works out of the box and prov
 
 Please file an issue if you like to propose new features.
 
-# Installation
+## Installation
 
 ```
 npm install @dirkluijk/needle-di
 ```
 
-## Advanced example
+## Advanced examples
 
-// todo
+

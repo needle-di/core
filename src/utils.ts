@@ -1,7 +1,7 @@
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-export type Class<T> = new (...args: any) => T;
+export type Class<T> = new (...args: any[]) => T;
+export interface AbstractClass<T> { prototype: T; name: string }
 
-// eslint-disable-next-line @typescript-eslint/no-unsafe-function-type
-export function isClass(target: unknown): target is Class<unknown> | Function {
+export function isClass(target: unknown): target is Class<unknown> | AbstractClass<unknown> {
   return typeof target === "function";
 }

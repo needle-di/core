@@ -67,9 +67,3 @@ export function isAsyncFactoryProvider<T>(
 ): provider is AsyncFactoryProvider<T> {
   return isFactoryProvider(provider) && (provider.async ?? false);
 }
-
-export function isExistingProvider<T>(
-  provider: Provider<T>,
-): provider is ExistingProvider<T> {
-  return "provide" in provider && "useExisting" in provider;
-}
