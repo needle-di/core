@@ -6,7 +6,6 @@ import {
 } from "./tokens.js";
 import {
   isClassProvider,
-  isExistingProvider,
   isFactoryProvider,
   isConstructorProvider,
   isValueProvider,
@@ -46,7 +45,7 @@ export class Container {
       throw Error(`No provider found for ${toString(token)}`);
     }
 
-    const provider = this.providers.getRequired(token);
+    const provider = assertNotNull(this.providers.get(token));
 
     if (!this.singletons.has(token)) {
       if (isAsyncFactoryProvider(provider)) {
@@ -58,7 +57,7 @@ export class Container {
       this.singletons.set(token, construct(provider, this));
     }
 
-    return this.singletons.getRequired(token) as T; // todo: ruled out the case where this is a promise
+    return assertNotNull(this.singletons.get(token));
   }
 
   async getAsync<T>(
@@ -82,14 +81,14 @@ export class Container {
       throw Error(`No provider found for ${toString(token)}`);
     }
 
-    const provider = this.providers.getRequired(token);
+    const provider = assertNotNull(this.providers.get(token));
 
     if (!this.singletons.has(token)) {
       const value = await constructAsync(provider, this);
       this.singletons.set(token, value);
     }
 
-    return await promisify(this.singletons.getRequired(token));
+    return await promisify(assertNotNull(this.singletons.get(token)));
   }
 
   private autoBindIfNeeded<T>(token: Token<T>) {
@@ -99,6 +98,16 @@ export class Container {
           provide: token,
           useClass: token,
         });
+
+        // inheritance support: also bind for its super classes
+        let superClass = Object.getPrototypeOf(token);
+        while (superClass.name) {
+          this.bind({
+            provide: superClass,
+            useClass: token,
+          });
+          superClass = Object.getPrototypeOf(superClass)
+        }
       } else if (isInjectionToken(token) && token.options?.factory) {
         this.bind({
           provide: token,
@@ -183,11 +192,9 @@ function doConstruct<T>(
     return provider.useValue;
   } else if (isFactoryProvider(provider)) {
     return provider.useFactory();
-  } else if (isExistingProvider(provider)) {
+  } else {
     return scope.get(provider.useExisting);
   }
-
-  throw Error(`Unsupported provider ${provider}`);
 }
 
 class ProviderMap extends Map<Token<unknown>, Provider<unknown>> {
@@ -197,16 +204,6 @@ class ProviderMap extends Map<Token<unknown>, Provider<unknown>> {
 
   override set<T>(key: Token<T>, value: Provider<T>): this {
     return super.set(key, value);
-  }
-
-  public getRequired<T>(token: Token<T>): Provider<T> {
-    const value = this.get(token);
-    if (value === undefined) {
-      throw Error(
-        `Provider expected to be present for token ${toString(token)}`,
-      );
-    }
-    return value;
   }
 }
 
@@ -218,18 +215,19 @@ class SingletonMap extends Map<Token<unknown>, unknown> {
   override set<T>(token: Token<T>, value: T): this {
     return super.set(token, value);
   }
-
-  public getRequired<T>(token: Token<T>): T {
-    const value = this.get(token);
-    if (value === undefined) {
-      throw Error(
-        `Singleton expected to be present for token ${toString(token)}`,
-      );
-    }
-    return value;
-  }
 }
 
 export function bootstrap<T>(token: Token<T>): T {
   return new Container().get(token);
+}
+
+export function bootstrapAsync<T>(token: Token<T>): Promise<T> {
+  return new Container().getAsync(token);
+}
+
+function assertNotNull<T>(value: T | null | undefined): T {
+  if (value === null || value === undefined) {
+    throw Error(`Expected value to be not null or undefined`);
+  }
+  return value;
 }

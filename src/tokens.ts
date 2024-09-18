@@ -1,9 +1,8 @@
-/* eslint-disable @typescript-eslint/no-unsafe-function-type */
-import { type Class, isClass } from "./utils.js";
+import { type AbstractClass, type Class, isClass } from "./utils.js";
 
 export type Token<T> =
   | Class<T>
-  | Function
+  | AbstractClass<T>
   | string
   | symbol
   | InjectionToken<T>;
@@ -31,7 +30,7 @@ export function isInjectionToken<T>(
 
 export function toString<T>(token: Token<T>): string {
   if (isClass(token)) {
-    return token.prototype.name ?? token.name;
+    return token.name;
   } else if (typeof token === "symbol") {
     return String(token);
   } else if (token instanceof InjectionToken) {

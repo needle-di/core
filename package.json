@@ -2,7 +2,14 @@
   "name": "@dirkluijk/needle-di",
   "version": "0.0.2",
   "description": "A simple TypeScript library for dependency injection",
-  "keywords": ["dependency injection", "di", "dependency", "injection", "typescript", "type-safe"],
+  "keywords": [
+    "dependency injection",
+    "di",
+    "dependency",
+    "injection",
+    "typescript",
+    "type-safe"
+  ],
   "homepage": "https://github.com/dirkluijk/needle-di",
   "author": {
     "name": "Dirk Luijk",
@@ -37,6 +44,7 @@
   "devDependencies": {
     "@eslint/js": "^9.10.0",
     "@total-typescript/tsconfig": "github:total-typescript/tsconfig",
+    "@vitest/coverage-v8": "^2.1.1",
     "eslint": "^9.10.0",
     "prettier": "^3.3.3",
     "typescript": "~5.5.0",
