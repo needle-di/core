@@ -20,7 +20,7 @@ interface AsyncInjectionTokenOptions<T> {
 export class InjectionToken<T> {
   constructor(
     private description: string | symbol,
-    public options?: InjectionTokenOptions<NoInfer<T>> | AsyncInjectionTokenOptions<NoInfer<T>>,
+    public options?: InjectionTokenOptions<T> | AsyncInjectionTokenOptions<T>,
   ) {}
 
   public toString(): string {

@@ -194,6 +194,7 @@ describe("Providers", () => {
 
       const container = new Container();
 
+      expect(container.get(AbstractService)).toBeInstanceOf(FooService);
       expect(container.get(FooService)).toBeInstanceOf(FooService);
       expect(container.get(FooService)).toBeInstanceOf(AbstractService);
 

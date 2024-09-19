@@ -12,11 +12,11 @@ import {
   type Provider,
   isAsyncFactoryProvider,
 } from "./providers.js";
-import { isInjectable } from "./decorators.js";
+import { getInjectableTarget, isInjectable } from './decorators.js';
 
 export class Container {
-  private providers = new ProviderMap();
-  private singletons = new SingletonMap();
+  private providers: ProviderMap = new Map();
+  private singletons: SingletonMap = new Map();
 
   bind<T>(provider: Provider<T>): this {
     const token = isConstructorProvider(provider) ? provider : provider.provide;
@@ -96,7 +96,7 @@ export class Container {
       if (isClassToken(token) && isInjectable(token)) {
         this.bind({
           provide: token,
-          useClass: token,
+          useClass: getInjectableTarget(token),
         });
 
         // inheritance support: also bind for its super classes
@@ -206,24 +206,14 @@ function doConstruct<T>(
   }
 }
 
-class ProviderMap extends Map<Token<unknown>, Provider<unknown>> {
-  override get<T>(key: Token<T>): Provider<T> | undefined {
-    return super.get(key) as Provider<T> | undefined;
-  }
-
-  override set<T>(key: Token<T>, value: Provider<T>): this {
-    return super.set(key, value);
-  }
+interface ProviderMap extends Map<Token<unknown>, Provider<unknown>> {
+  get<T>(key: Token<T>): Provider<T> | undefined
+  set<T>(key: Token<T>, value: Provider<T>): this
 }
 
-class SingletonMap extends Map<Token<unknown>, unknown> {
-  override get<T>(token: Token<T>): T | undefined {
-    return super.get(token) as T | undefined;
-  }
-
-  override set<T>(token: Token<T>, value: T): this {
-    return super.set(token, value);
-  }
+interface SingletonMap extends Map<Token<unknown>, unknown> {
+  get<T>(token: Token<T>): T | undefined
+  set<T>(token: Token<T>, value: T): this
 }
 
 export function bootstrap<T>(token: Token<T>): T {
