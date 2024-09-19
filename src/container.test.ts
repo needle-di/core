@@ -50,7 +50,7 @@ describe("Container API", () => {
       .bind({
         provide: otherToken,
         async: true,
-        useFactory: () => new Promise<string>((resolve) => resolve("foo")),
+        useFactory: () => Promise.resolve("foo"),
       })
       .bind({
         provide: token,

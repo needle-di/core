@@ -132,10 +132,7 @@ describe("Container", () => {
       .bind({
         provide: tokenProvidedAsync,
         async: true,
-        useFactory: () =>
-          new Promise<Foo>((resolve) => {
-            resolve({ foo: "async" });
-          }),
+        useFactory: () => Promise.resolve({ foo: "async" }),
       });
 
     expect(factoryFn).not.toHaveBeenCalled();
