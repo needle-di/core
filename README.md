@@ -10,6 +10,7 @@ A light-weight TypeScript-first library for dependency injection.
 
 * Stand-alone, no need to install other dependencies
 * Intended for both JavaScript and TypeScript projects
+* Supports three-shakeable injection tokens
 * Inspired by [Angular](https://angular.dev/) and [InversifyJS](https://github.com/inversify/InversifyJS)
 * Uses native [ECMAScript TC39 decorators](https://github.com/tc39/proposal-decorators) (currently stage 3)
 * No need for `experimentalDecorators` and `emitDecoratorMetadata`
@@ -64,6 +65,7 @@ Check out the [advanced examples](#advanced-examples) below to learn more!
   * Static values
   * Dynamic factories
   * Async factories
+  * Multi providers
 * Inheritance support
 
 ## Limitations
@@ -75,7 +77,6 @@ However, if you prefer a light-weight library that works out of the box and prov
 
 * Extend the Container API
 * Scoping
-* Multi-injection
 * ...
 
 Please file an issue if you like to propose new features.

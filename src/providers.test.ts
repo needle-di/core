@@ -32,6 +32,8 @@ describe("Providers", () => {
     expect(container.get(MyService)).toBe(myService);
     expect(container.get(MyService, { optional: true })).toBe(myService);
     expect(myServiceConstructorSpy).toHaveBeenCalledTimes(1);
+
+    expect(() => container.bind(MyService)).toThrowError();
   });
 
   it("Class providers should be provided once", () => {
@@ -180,11 +182,11 @@ describe("Providers", () => {
   });
 
   describe("abstract classes and inheritance", () => {
-    abstract class AbstractService {
-      protected constructor(public name = "AbstractService") {}
-    }
-
     it("should support annotated subclasses", () => {
+      abstract class AbstractService {
+        protected constructor(public name = "AbstractService") {}
+      }
+
       @injectable()
       class FooService extends AbstractService {
         constructor(public fooProp = "foo") {
@@ -196,12 +198,17 @@ describe("Providers", () => {
 
       expect(container.get(AbstractService)).toBeInstanceOf(FooService);
       expect(container.get(FooService)).toBeInstanceOf(FooService);
+      expect(container.get(FooService)).toBe(container.get(AbstractService));
       expect(container.get(FooService)).toBeInstanceOf(AbstractService);
 
       expect(container.get(AbstractService)).toBeInstanceOf(FooService);
     });
 
     it("should support binding subclasses", () => {
+      abstract class AbstractService {
+        protected constructor(public name = "AbstractService") {}
+      }
+
       class FooService extends AbstractService {
         constructor(public fooProp = "foo") {
           super("FooService");
@@ -236,6 +243,73 @@ describe("Providers", () => {
       expect(container.get(BarService)).toBeInstanceOf(AbstractService);
 
       expect(container.get(AbstractService)).toBeInstanceOf(FooService);
+    });
+  });
+
+  describe("Multi-provider injection", () => {
+    it("should support multi-value providers", () => {
+      const container = new Container();
+
+      const TOKEN = new InjectionToken<number>("TOKEN");
+      const OTHER_TOKEN = new InjectionToken<number>("OTHER_TOKEN");
+
+      container
+        .bind({
+          provide: TOKEN,
+          multi: true,
+          useValue: 1,
+        })
+        .bind({
+          provide: TOKEN,
+          multi: true,
+          useValue: 2,
+        });
+
+      expect(container.get(TOKEN, { multi: true })).toEqual([1, 2]);
+      expect(() => container.get(OTHER_TOKEN, { multi: true })).toThrowError();
+      expect(container.get(OTHER_TOKEN, { multi: true, optional: true })).toBeUndefined();
+
+      expect(() => {
+        container.bind({
+          provide: TOKEN,
+          multi: true,
+          useValue: 1,
+        });
+      }).toThrowError();
+    });
+
+    it("should support multi-value async providers", async () => {
+      const container = new Container();
+
+      const TOKEN = new InjectionToken<number>("TOKEN");
+      const OTHER_TOKEN = new InjectionToken<number>("OTHER_TOKEN");
+
+      container
+        .bind({
+          provide: TOKEN,
+          multi: true,
+          async: true,
+          useFactory: () => Promise.resolve(1),
+        })
+        .bind({
+          provide: TOKEN,
+          multi: true,
+          async: true,
+          useFactory: () => Promise.resolve(2),
+        });
+
+      expect(await container.getAsync(TOKEN, { multi: true })).toEqual([1, 2]);
+      expect(container.getAsync(OTHER_TOKEN, { multi: true })).rejects.toThrowError();
+      expect(await container.getAsync(OTHER_TOKEN, { multi: true, optional: true })).toBeUndefined();
+
+      expect(() => {
+        container.bind({
+          provide: TOKEN,
+          multi: true,
+          async: true,
+          useFactory: () => Promise.resolve(1),
+        });
+      }).toThrowError();
     });
   });
 });
