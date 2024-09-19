@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.1.0](https://github.com/dirkluijk/needle-di/compare/v0.0.3...v0.1.0) (2024-09-19)
+
+
+### Features
+
+* support async token factories ([#5](https://github.com/dirkluijk/needle-di/issues/5)) ([f39d6cd](https://github.com/dirkluijk/needle-di/commit/f39d6cd28d6fdb96664f82f084d9ed55405ece4b))
+
+
+### Bug Fixes
+
+* **inheritance:** trigger auto-binding when using parent class as token ([#7](https://github.com/dirkluijk/needle-di/issues/7)) ([0edbec7](https://github.com/dirkluijk/needle-di/commit/0edbec733800c1919d0577e2bfcfa66d9bc14fb9))
+
 ## 0.0.3 (2024-09-18)
 
 
