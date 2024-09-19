@@ -7,10 +7,20 @@ export type Token<T> =
   | symbol
   | InjectionToken<T>;
 
+interface InjectionTokenOptions<T> {
+  async?: false,
+  factory: () => T
+}
+
+interface AsyncInjectionTokenOptions<T> {
+  async: true,
+  factory: () => Promise<T>
+}
+
 export class InjectionToken<T> {
   constructor(
     private description: string | symbol,
-    public options?: { factory: () => T },
+    public options?: InjectionTokenOptions<NoInfer<T>> | AsyncInjectionTokenOptions<NoInfer<T>>,
   ) {}
 
   public toString(): string {

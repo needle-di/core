@@ -109,10 +109,19 @@ export class Container {
           superClass = Object.getPrototypeOf(superClass)
         }
       } else if (isInjectionToken(token) && token.options?.factory) {
-        this.bind({
-          provide: token,
-          useFactory: token.options.factory,
-        });
+        if (!token.options.async) {
+          this.bind({
+            provide: token,
+            async: false,
+            useFactory: token.options.factory,
+          });
+        } else if (token.options.async) {
+          this.bind({
+            provide: token,
+            async: true,
+            useFactory: token.options.factory,
+          });
+        }
       }
     }
   }

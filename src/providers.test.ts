@@ -1,12 +1,12 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { Container } from "./container.js";
 import { InjectionToken } from "./tokens.js";
-import { injectable } from './decorators.js';
+import { injectable } from "./decorators.js";
 
 const myServiceConstructorSpy = vi.fn();
 
 class MyService {
-  constructor(public name = 'MyService') {
+  constructor(public name = "MyService") {
     myServiceConstructorSpy();
   }
 }
@@ -106,7 +106,7 @@ describe("Providers", () => {
     container.bind({
       provide: MyService,
       async: true,
-      useFactory: () => new Promise<MyService>(resolve => resolve(new MyService()))
+      useFactory: () => Promise.resolve(new MyService()),
     });
 
     expect(myServiceConstructorSpy).not.toHaveBeenCalled();
@@ -126,7 +126,7 @@ describe("Providers", () => {
     expect(() => container.get(MyService)).toThrowError();
     expect(container.get(MyService, { optional: true })).toBeUndefined();
 
-    const OTHER_TOKEN = new InjectionToken<MyService>('MyService');
+    const OTHER_TOKEN = new InjectionToken<MyService>("MyService");
 
     container.bind(MyService);
     container.bind({
@@ -144,16 +144,51 @@ describe("Providers", () => {
     expect(myServiceConstructorSpy).toHaveBeenCalledTimes(1);
   });
 
-  describe('abstract classes and inheritance', () => {
+  it("Token factories should be provided once", () => {
+    const container = new Container();
+
+    const TOKEN = new InjectionToken<MyService>("MyService", {
+      factory: () => new MyService(),
+    });
+
+    expect(myServiceConstructorSpy).not.toHaveBeenCalled();
+
+    const myService = container.get(TOKEN);
+
+    expect(myService).toBeInstanceOf(MyService);
+    expect(container.get(TOKEN)).toBe(myService);
+    expect(container.get(TOKEN, { optional: true })).toBe(myService);
+    expect(myServiceConstructorSpy).toHaveBeenCalledTimes(1);
+  });
+
+  it("Token async factories should be provided once", async () => {
+    const container = new Container();
+
+    const TOKEN = new InjectionToken<MyService>("MyService", {
+      async: true,
+      factory: () => Promise.resolve(new MyService()),
+    });
+
+    expect(myServiceConstructorSpy).not.toHaveBeenCalled();
+
+    const myService = await container.getAsync(TOKEN);
+
+    expect(myService).toBeInstanceOf(MyService);
+    expect(await container.getAsync(TOKEN)).toBe(myService);
+    expect(await container.getAsync(TOKEN, { optional: true })).toBe(myService);
+    expect(myServiceConstructorSpy).toHaveBeenCalledTimes(1);
+  });
+
+  describe("abstract classes and inheritance", () => {
     abstract class AbstractService {
-      protected constructor(public name = 'AbstractService') {}
+      protected constructor(public name = "AbstractService") {}
     }
 
-    it('should support annotated subclasses', () => {
+    it("should support annotated subclasses", () => {
       @injectable()
       class FooService extends AbstractService {
-        constructor(public fooProp = 'foo') {
-          super('FooService')
+        constructor(public fooProp = "foo") {
+          super("FooService");
         }
       }
 
@@ -165,34 +200,34 @@ describe("Providers", () => {
       expect(container.get(AbstractService)).toBeInstanceOf(FooService);
     });
 
-    it('should support binding subclasses', () => {
+    it("should support binding subclasses", () => {
       class FooService extends AbstractService {
-        constructor(public fooProp = 'foo') {
-          super('FooService')
+        constructor(public fooProp = "foo") {
+          super("FooService");
         }
       }
 
       class BarService extends AbstractService {
-        constructor(public fooProp = 'bar') {
-          super('BarService')
+        constructor(public fooProp = "bar") {
+          super("BarService");
         }
       }
 
       const container = new Container();
 
       container
-          .bind({
-            provide: FooService,
-            useClass: FooService
-          })
-          .bind({
-            provide: BarService,
-            useClass: BarService
-          })
-          .bind({
-            provide: AbstractService,
-            useExisting: FooService
-          })
+        .bind({
+          provide: FooService,
+          useClass: FooService,
+        })
+        .bind({
+          provide: BarService,
+          useClass: BarService,
+        })
+        .bind({
+          provide: AbstractService,
+          useExisting: FooService,
+        });
 
       expect(container.get(FooService)).toBeInstanceOf(FooService);
       expect(container.get(FooService)).toBeInstanceOf(AbstractService);
@@ -201,7 +236,5 @@ describe("Providers", () => {
 
       expect(container.get(AbstractService)).toBeInstanceOf(FooService);
     });
-
-
   });
 });
