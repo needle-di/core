@@ -1,6 +1,6 @@
 {
   "name": "@dirkluijk/needle-di",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "A simple TypeScript library for dependency injection",
   "keywords": [
     "dependency injection",
