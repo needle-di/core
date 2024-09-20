@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.0](https://github.com/dirkluijk/needle-di/compare/v0.1.0...v0.2.0) (2024-09-20)
+
+
+### Features
+
+* **providers:** add support for multi-providers ([#8](https://github.com/dirkluijk/needle-di/issues/8)) ([b563a1c](https://github.com/dirkluijk/needle-di/commit/b563a1c1fbc9d9e3adb487459d611655ad0c6a15))
+
 ## [0.1.0](https://github.com/dirkluijk/needle-di/compare/v0.0.3...v0.1.0) (2024-09-19)
 
 
