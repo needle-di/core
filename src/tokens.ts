@@ -1,20 +1,15 @@
 import { type AbstractClass, type Class, isClass } from "./utils.js";
 
-export type Token<T> =
-  | Class<T>
-  | AbstractClass<T>
-  | string
-  | symbol
-  | InjectionToken<T>;
+export type Token<T> = Class<T> | AbstractClass<T> | string | symbol | InjectionToken<T>;
 
 interface InjectionTokenOptions<T> {
-  async?: false,
-  factory: () => T
+  async?: false;
+  factory: () => T;
 }
 
 interface AsyncInjectionTokenOptions<T> {
-  async: true,
-  factory: () => Promise<T>
+  async: true;
+  factory: () => Promise<T>;
 }
 
 export class InjectionToken<T> {
@@ -32,9 +27,7 @@ export function isClassToken<T>(token: Token<T>): token is Class<T> {
   return isClass(token);
 }
 
-export function isInjectionToken<T>(
-  token: Token<T>,
-): token is InjectionToken<T> {
+export function isInjectionToken<T>(token: Token<T>): token is InjectionToken<T> {
   return token instanceof InjectionToken;
 }
 

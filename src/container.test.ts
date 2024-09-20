@@ -1,11 +1,5 @@
-import { afterEach, describe, expect, it, vi } from 'vitest';
-import {
-  bootstrap,
-  bootstrapAsync,
-  Container,
-  inject,
-  injectAsync,
-} from "./container.js";
+import { afterEach, describe, expect, it, vi } from "vitest";
+import { bootstrap, bootstrapAsync, Container, inject, injectAsync } from "./container.js";
 import { injectable } from "./decorators.js";
 import { InjectionToken } from "./tokens.js";
 
