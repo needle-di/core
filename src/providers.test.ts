@@ -19,7 +19,7 @@ describe("Providers", () => {
   it("Constructor providers should be provided once", () => {
     const container = new Container();
 
-    expect(() => container.get(MyService)).toThrowError();
+    expect(() => container.get(MyService)).toThrowError("No provider(s) found");
     expect(container.get(MyService, { optional: true })).toBeUndefined();
 
     container.bind(MyService);
@@ -33,13 +33,13 @@ describe("Providers", () => {
     expect(container.get(MyService, { optional: true })).toBe(myService);
     expect(myServiceConstructorSpy).toHaveBeenCalledTimes(1);
 
-    expect(() => container.bind(MyService)).toThrowError();
+    expect(() => container.bind(MyService)).toThrowError("existing provider was already constructed");
   });
 
   it("Class providers should be provided once", () => {
     const container = new Container();
 
-    expect(() => container.get(MyService)).toThrowError();
+    expect(() => container.get(MyService)).toThrowError("No provider(s) found");
     expect(container.get(MyService, { optional: true })).toBeUndefined();
 
     container.bind({
@@ -60,7 +60,7 @@ describe("Providers", () => {
   it("Value providers should be provided", () => {
     const container = new Container();
 
-    expect(() => container.get(MyService)).toThrowError();
+    expect(() => container.get(MyService)).toThrowError("No provider(s) found");
     expect(container.get(MyService, { optional: true })).toBeUndefined();
 
     const myService = new MyService();
@@ -79,7 +79,7 @@ describe("Providers", () => {
   it("Factory providers should be provided once", () => {
     const container = new Container();
 
-    expect(() => container.get(MyService)).toThrowError();
+    expect(() => container.get(MyService)).toThrowError("No provider(s) found");
     expect(container.get(MyService, { optional: true })).toBeUndefined();
 
     container.bind({
@@ -100,9 +100,9 @@ describe("Providers", () => {
   it("Async providers should be provided once", async () => {
     const container = new Container();
 
-    expect(() => container.get(MyService)).toThrowError();
+    expect(() => container.get(MyService)).toThrowError("No provider(s) found");
     expect(container.get(MyService, { optional: true })).toBeUndefined();
-    expect(container.getAsync(MyService)).rejects.toThrowError();
+    expect(container.getAsync(MyService)).rejects.toThrowError("No provider(s) found");
     expect(await container.getAsync(MyService, { optional: true })).toBeUndefined();
 
     container.bind({
@@ -112,7 +112,7 @@ describe("Providers", () => {
     });
 
     expect(myServiceConstructorSpy).not.toHaveBeenCalled();
-    expect(() => container.get(MyService)).toThrowError();
+    expect(() => container.get(MyService)).toThrowError("use injectAsync() or container.getAsync() instead");
 
     const myService = await container.getAsync(MyService);
 
@@ -125,7 +125,7 @@ describe("Providers", () => {
   it("Existing providers should be provided once", () => {
     const container = new Container();
 
-    expect(() => container.get(MyService)).toThrowError();
+    expect(() => container.get(MyService)).toThrowError("No provider(s) found");
     expect(container.get(MyService, { optional: true })).toBeUndefined();
 
     const OTHER_TOKEN = new InjectionToken<MyService>("MyService");
@@ -266,7 +266,7 @@ describe("Providers", () => {
         });
 
       expect(container.get(TOKEN, { multi: true })).toEqual([1, 2]);
-      expect(() => container.get(OTHER_TOKEN, { multi: true })).toThrowError();
+      expect(() => container.get(OTHER_TOKEN, { multi: true })).toThrowError("No provider(s) found");
       expect(container.get(OTHER_TOKEN, { multi: true, optional: true })).toBeUndefined();
 
       expect(() => {
@@ -275,7 +275,7 @@ describe("Providers", () => {
           multi: true,
           useValue: 1,
         });
-      }).toThrowError();
+      }).toThrowError("already constructed");
     });
 
     it("should support multi-value async providers", async () => {
@@ -299,7 +299,7 @@ describe("Providers", () => {
         });
 
       expect(await container.getAsync(TOKEN, { multi: true })).toEqual([1, 2]);
-      expect(container.getAsync(OTHER_TOKEN, { multi: true })).rejects.toThrowError();
+      expect(container.getAsync(OTHER_TOKEN, { multi: true })).rejects.toThrowError("No provider(s) found");
       expect(await container.getAsync(OTHER_TOKEN, { multi: true, optional: true })).toBeUndefined();
 
       expect(() => {
@@ -309,7 +309,29 @@ describe("Providers", () => {
           async: true,
           useFactory: () => Promise.resolve(1),
         });
-      }).toThrowError();
+      }).toThrowError("already constructed");
     });
+  });
+
+  it("should throw an error when requesting a single async one", () => {
+    const container = new Container();
+    const MY_TOKEN = Symbol.for("my-token");
+
+    container.bindAll(
+        {
+          provide: MY_TOKEN,
+          useFactory: () => Promise.resolve(1),
+          async: true,
+          multi: true,
+        },
+        {
+          provide: MY_TOKEN,
+          useFactory: () => Promise.resolve(2),
+          async: true,
+          multi: true,
+        },
+    );
+
+    expect(() => container.get(MY_TOKEN)).toThrowError("use injectAsync() or container.getAsync() instead");
   });
 });
