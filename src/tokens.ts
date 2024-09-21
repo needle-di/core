@@ -19,7 +19,7 @@ export class InjectionToken<T> {
   ) {}
 
   public toString(): string {
-    return `InjectionToken ${String(this.description)}`;
+    return `InjectionToken "${String(this.description)}"`;
   }
 }
 
@@ -35,7 +35,7 @@ export function toString<T>(token: Token<T>): string {
   if (isClass(token)) {
     return token.name;
   } else if (typeof token === "symbol") {
-    return String(token);
+    return token.description ?? String(token);
   } else if (token instanceof InjectionToken) {
     return token.toString();
   } else {
