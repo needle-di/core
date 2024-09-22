@@ -318,18 +318,18 @@ describe("Providers", () => {
     const MY_TOKEN = Symbol.for("my-token");
 
     container.bindAll(
-        {
-          provide: MY_TOKEN,
-          useFactory: () => Promise.resolve(1),
-          async: true,
-          multi: true,
-        },
-        {
-          provide: MY_TOKEN,
-          useFactory: () => Promise.resolve(2),
-          async: true,
-          multi: true,
-        },
+      {
+        provide: MY_TOKEN,
+        useFactory: () => Promise.resolve(1),
+        async: true,
+        multi: true,
+      },
+      {
+        provide: MY_TOKEN,
+        useFactory: () => Promise.resolve(2),
+        async: true,
+        multi: true,
+      },
     );
 
     expect(() => container.get(MY_TOKEN)).toThrowError("use injectAsync() or container.getAsync() instead");

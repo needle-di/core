@@ -1,26 +1,24 @@
-import type { Class } from "./utils.js";
+import { type AbstractClass, type Class, getParentClasses } from "./utils.js";
 
 // eslint-disable-next-line @typescript-eslint/no-invalid-void-type
 type ClassDecorator<C extends Class<unknown>> = (target: C) => C | void;
 
 export const injectableSymbol = Symbol("injectable");
 
-export type InjectableClass<T = unknown> = Class<T> & { [injectableSymbol]: Class<unknown>[]};
+export type InjectableClass<T = unknown> = (Class<T> | AbstractClass<T>) & { [injectableSymbol]: Class<unknown>[] };
 
 export function injectable<C extends Class<unknown>>(): ClassDecorator<C> {
   return (target) => {
-    let superClass = Object.getPrototypeOf(target);
-    while (superClass.name) {
-      if (!Object.getOwnPropertyDescriptor(superClass, injectableSymbol)) {
-        Object.defineProperty(superClass, injectableSymbol, {
+    getParentClasses(target).forEach((parentClass) => {
+      if (!Object.getOwnPropertyDescriptor(parentClass, injectableSymbol)) {
+        Object.defineProperty(parentClass, injectableSymbol, {
           value: [target],
           writable: true,
         });
       } else {
-        superClass[injectableSymbol] = [...superClass[injectableSymbol], target];
+        parentClass[injectableSymbol] = [...parentClass[injectableSymbol], target];
       }
-      superClass = Object.getPrototypeOf(superClass);
-    }
+    });
 
     Object.defineProperty(target, injectableSymbol, {
       value: [target],
@@ -29,7 +27,7 @@ export function injectable<C extends Class<unknown>>(): ClassDecorator<C> {
   };
 }
 
-export function isInjectable<T>(target: Class<T>): target is InjectableClass<T> {
+export function isInjectable<T>(target: AbstractClass<T>): target is InjectableClass<T> {
   // eslint-disable-next-line no-prototype-builtins
   return target.hasOwnProperty(injectableSymbol);
 }

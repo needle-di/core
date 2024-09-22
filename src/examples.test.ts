@@ -100,7 +100,7 @@ describe("Container", () => {
     const container = new Container();
     const service = container.get(MyService);
 
-    expect(() => service.triggerInject()).toThrowError('You can only invoke inject() from the injection context');
+    expect(() => service.triggerInject()).toThrowError("You can only invoke inject() from the injection context");
   });
 
   it("should support all kinds of providers", async () => {
@@ -149,10 +149,14 @@ describe("Container", () => {
 
     expect(factoryFn).toHaveBeenCalledTimes(1);
 
-    expect(() => container.get(tokenWithoutProvider)).toThrowError('No provider(s) found');
-    expect(() => container.get(tokenWithoutProvider, { optional: false })).toThrowError('No provider(s) found');
+    expect(() => container.get(tokenWithoutProvider)).toThrowError("No provider(s) found");
+    expect(() => container.get(tokenWithoutProvider, { optional: false })).toThrowError("No provider(s) found");
 
-    expect(() => container.get(tokenProvidedAsync)).toThrowError('use injectAsync() or container.getAsync() instead');
+    expect(() => container.get(tokenProvidedAsync)).toThrowError("use injectAsync() or container.getAsync() instead");
+
+    await container.getAsync(tokenProvidedAsync);
+
+    expect(() => container.get(tokenProvidedAsync)).not.toThrowError();
 
     const fooAsync = await container.getAsync(tokenProvidedAsync);
     expect(fooAsync).toEqual({ foo: "async" });
