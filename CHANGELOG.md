@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.3.0](https://github.com/dirkluijk/needle-di/compare/v0.2.0...v0.3.0) (2024-09-22)
+
+
+### Features
+
+* **providers:** flatten multi-providers when using useExisting ([#10](https://github.com/dirkluijk/needle-di/issues/10)) ([48df581](https://github.com/dirkluijk/needle-di/commit/48df581ec4901ecdd642cc7c64e527de71d1ec48))
+
 ## [0.2.0](https://github.com/dirkluijk/needle-di/compare/v0.1.0...v0.2.0) (2024-09-20)
 
 
