@@ -18,12 +18,12 @@ describe("Container API", () => {
   });
 
   it("inject", () => {
-    expect(() => inject(MyService)).toThrowError('You can only invoke inject() from the injection context');
+    expect(() => inject(MyService)).toThrowError("You can only invoke inject() from the injection context");
 
     const container = new Container();
     const token = new InjectionToken<MyService>("some-token");
 
-    expect(() => container.get(token)).toThrowError('No provider(s) found');
+    expect(() => container.get(token)).toThrowError("No provider(s) found");
 
     container.bind({
       provide: token,
@@ -34,7 +34,7 @@ describe("Container API", () => {
   });
 
   it("injectAsync", async () => {
-    expect(() => injectAsync(MyService)).toThrowError('You can only invoke injectAsync() from the injection context');
+    expect(() => injectAsync(MyService)).toThrowError("You can only invoke injectAsync() from the injection context");
 
     const container = new Container();
     const token = new InjectionToken<string>("some-token");
