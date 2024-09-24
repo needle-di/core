@@ -31,8 +31,7 @@ class FooService {}
 @injectable()
 class BarService {
   constructor(private fooService = inject(FooService)) {}
-
-  //                  ^? Will be inferred as `FooService`
+  //                  ^? Type will be inferred as `FooService`
 }
 ```
 
@@ -44,7 +43,7 @@ import { Container } from "@dirkluijk/needle-di";
 
 const container = new Container();
 const barService = container.get(BarService);
-//    ^? Will be inferred as `BarService`
+//    ^? Type will be inferred as `BarService`
 ```
 
 If you don't need to interact with the DI container at all, you can also use the `bootstrap()` shorthand function
@@ -120,7 +119,7 @@ To obtain something from the container, you can use `container.get(token)`:
 
 ```typescript
 const fooService = container.get(FooService);
-//    ^? Will be inferred as `FooService`
+//    ^? Type will be inferred as `FooService`
 ```
 
 This is useful when you need something outside of a class, but will require a reference to your container.
@@ -137,8 +136,10 @@ import { inject, injectable } from "@dirkluijk/needle-di";
 @injectable()
 class MyService {
   constructor(
-    private readonly fooService = inject(FooService),
-    private readonly barService = inject(BarService),
+    private fooService = inject(FooService),
+    //      ^? Type will be inferred as `FooService`
+    private barService = inject(BarService),
+    //      ^? Type will be inferred as `BarService`
   ) {}
 
   // ...
@@ -153,8 +154,7 @@ Note that the `inject()` function is only available in the "injection context":
 - In the `factory` function specified for an `InjectionToken`;
 
 > Needle DI uses **default parameter values** for constructor injection. This maximizes type-safety and removes the need
-> for
-> parameter decorators, which aren't yet standardized in ECMAScript.
+> for parameter decorators, which aren't yet standardized in ECMAScript.
 
 ### Manual binding
 
@@ -322,9 +322,9 @@ container.bind({
 });
 
 const myNumber = container.get(MY_NUMBER);
-//       ^? Its type will be inferred as `number`
+//       ^? Type will be inferred as `number`
 const myConfig = container.get(MY_CONFIG);
-//       ^? Its type will be inferred as `MyConfig`
+//       ^? Type will be inferred as `MyConfig`
 ```
 
 This maximizes type-safety since both `container.bind()`, `container.get()` and `inject()` will check and infer the
@@ -375,9 +375,9 @@ import { inject } from "@dirkluijk/needle-di";
 class MyService {
   constructor(
     private fooService = inject(FooService),
-    //        ^? Its type will be inferred as `FooService`
+    //      ^? Type will be inferred as `FooService`
     private barService = inject(BarService, { optional: true }),
-    //        ^? Its type will be inferred as `BarService | undefined`
+    //      ^? Type will be inferred as `BarService | undefined`
   ) {}
 }
 ```
@@ -420,7 +420,7 @@ To inject both instances, you can pass `{ multi: true }` to the `inject()` funct
 class MyService {
   constructor(
     private fooServices = inject(FooService, { multi: true }),
-    //        ^? Its type will be inferred as `FooService[]`
+    //      ^? Type will be inferred as `FooService[]`
   ) {}
 }
 ```
@@ -462,8 +462,8 @@ const fooService = container.get(FooService);
 const barService = container.get(BarService);
 
 const myServices = container.get(ExampleService, { multi: true });
-//    ^? Will be inferred as `ExampleService[]`
-//        and are the very same instances as "fooService" and "barService'
+//    ^? Type will be inferred as `ExampleService[]`
+//        and will be the same instances as "fooService" and "barService'
 ```
 
 Under the hood, it is the same as:
