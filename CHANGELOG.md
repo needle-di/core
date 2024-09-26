@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.0.5](https://github.com/dirkluijk/needle-di/compare/v0.3.0...v0.0.5) (2024-09-26)
+
+
+### Miscellaneous Chores
+
+* release 0.5.0 ([a8f1b06](https://github.com/dirkluijk/needle-di/commit/a8f1b06c7cae0447cceea08a6073c81c236ddee9))
+
 ## [0.3.0](https://github.com/dirkluijk/needle-di/compare/v0.2.0...v0.3.0) (2024-09-22)
 
 
