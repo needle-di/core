@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.4.0](https://github.com/dirkluijk/needle-di/compare/v0.3.0...v0.4.0) (2024-09-26)
+
+
+### Miscellaneous Chores
+
+* move NPM package to 'needle-di' ([7348441](https://github.com/dirkluijk/needle-di/commit/7348441931179971dd41ac6583876faee3cfd241))
+
 ## [0.3.0](https://github.com/dirkluijk/needle-di/compare/v0.2.0...v0.3.0) (2024-09-22)
 
 
