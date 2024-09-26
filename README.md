@@ -2,8 +2,8 @@
 
 > A lightweight, type-safe Dependency Injection (DI) library for JavaScript and TypeScript projects.
 
-[![NPM version](http://img.shields.io/npm/v/@dirkluijk/needle-di.svg?style=flat-square)](https://www.npmjs.com/package/@dirkluijk/needle-di)
-[![NPM downloads](http://img.shields.io/npm/dm/@dirkluijk/needle-di.svg?style=flat-square)](https://www.npmjs.com/package/@dirkluijk/needle-di)
+[![NPM version](http://img.shields.io/npm/v/needle-di.svg?style=flat-square)](https://www.npmjs.com/package/needle-di)
+[![NPM downloads](http://img.shields.io/npm/dm/needle-di.svg?style=flat-square)](https://www.npmjs.com/package/needle-di)
 [![Build status](https://github.com/dirkluijk/needle-di/actions/workflows/main.yml/badge.svg?branch=main)](https://github.com/dirkluijk/needle-di/actions/workflows/main.yml)
 
 Needle DI is a lightweight, TypeScript-first library for dependency injection (DI). It is designed to be both easy to use and highly efficient.
@@ -23,7 +23,7 @@ Needle DI is a lightweight, TypeScript-first library for dependency injection (D
 Here’s a simple example using constructor injection to inject one service into another.
 
 ```typescript
-import { injectable, inject } from "@dirkluijk/needle-di";
+import { injectable, inject } from "needle-di";
 
 @injectable()
 class FooService {}
@@ -39,7 +39,7 @@ The `@injectable` decorator eliminates the need to manually register services. T
 dependency injection container, and use the `container.get()` method:
 
 ```typescript
-import { Container } from "@dirkluijk/needle-di";
+import { Container } from "needle-di";
 
 const container = new Container();
 const barService = container.get(BarService);
@@ -51,7 +51,7 @@ instead.
 This will internally create a new container and return the constructed service:
 
 ```typescript
-import { bootstrap } from "@dirkluijk/needle-di";
+import { bootstrap } from "needle-di";
 
 const barService = bootstrap(BarService);
 ```
@@ -71,7 +71,7 @@ If you want to request a missing feature, feel free to submit an issue to explai
 ## Installation
 
 ```
-npm install @dirkluijk/needle-di
+npm install needle-di
 ```
 
 ## Usage
@@ -81,7 +81,7 @@ npm install @dirkluijk/needle-di
 The easiest way to use Needle DI is by using the `@injectable()` decorator.
 
 ```typescript
-import { injectable } from "@dirkluijk/needle-di";
+import { injectable } from "needle-di";
 
 @injectable()
 class FooService {
@@ -108,7 +108,7 @@ The dependency injection container will keep track of all bindings and hold the 
 create it, simply construct one:
 
 ```typescript
-import { Container } from "@dirkluijk/needle-di";
+import { Container } from "needle-di";
 
 const container = new Container();
 ```
@@ -131,7 +131,7 @@ In most cases however, you probably want to inject your dependencies inside a cl
 Instead of using `container.get(token)`, you can use the `inject()` function here:
 
 ```typescript
-import { inject, injectable } from "@dirkluijk/needle-di";
+import { inject, injectable } from "needle-di";
 
 @injectable()
 class MyService {
@@ -167,7 +167,7 @@ To manually bind (register) something to your DI container, you will need to und
 For example:
 
 ```typescript
-import { Container } from "@dirkluijk/needle-di";
+import { Container } from "needle-di";
 
 const container = new Container();
 
@@ -304,7 +304,7 @@ A better alternative is to use an `InjectionToken<T>`. This is basically a uniqu
 type.
 
 ```typescript
-import { InjectionToken } from "@dirkluijk/needle-di";
+import { InjectionToken } from "needle-di";
 
 const MY_NUMBER = new InjectionToken<number>("MY_NUMBER");
 const MY_CONFIG = new InjectionToken<MyConfig>("MY_CONFIG");
@@ -337,7 +337,7 @@ This is not the only benefit: it also enables tree-shakable tokens.
 There is also the option to provide a `factory` function in your `InjectionToken`:
 
 ```typescript
-import { InjectionToken } from "@dirkluijk/needle-di";
+import { InjectionToken } from "needle-di";
 
 const MY_NUMBER = new InjectionToken<number>("MY_NUMBER", {
   factory: () => 42,
@@ -370,7 +370,7 @@ Alternatively, you can use optional injection, by passing `{ optional: true }`. 
 now return `undefined`:
 
 ```typescript
-import { inject } from "@dirkluijk/needle-di";
+import { inject } from "needle-di";
 
 class MyService {
   constructor(
@@ -397,7 +397,7 @@ By default, when you reuse an existing token in a binding, it will overwrite any
 However, it is also possible to register multiple values for the same token:
 
 ```typescript
-import { Container } from "@dirkluijk/needle-di";
+import { Container } from "needle-di";
 
 const container = new Container();
 
