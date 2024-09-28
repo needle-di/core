@@ -248,26 +248,26 @@ describe("Container", () => {
     }
 
     class BarService extends AbstractService {
-      constructor() {
+      constructor(public barProp: string) {
         super("Bar");
       }
     }
 
     class SpecialBarService extends BarService {
       constructor(public age = 6) {
-        super();
+        super("SpecialBar");
       }
     }
 
     class BazService extends AbstractService {
-      constructor() {
+      constructor(public bazProp: string) {
         super("Bar");
       }
     }
 
     class SpecialBazService extends BazService {
-      constructor(public age = 8) {
-        super();
+      constructor(public specialBazProp: string) {
+        super("SpecialBaz");
       }
     }
 
@@ -709,5 +709,25 @@ describe("Container", () => {
 
     const bar = bootstrap(Bar);
     expect(bar.letFooSayHi()).toBe("Hi!");
+  });
+
+  it("should support symbols", () => {
+    const container = new Container();
+    const OTHER_TOKEN = Symbol("other-token");
+
+    container.bindAll(
+      {
+        provide: Symbol.for("my-token"),
+        useValue: 42,
+      },
+      {
+        provide: OTHER_TOKEN,
+        useValue: 2,
+      },
+    );
+
+    expect(container.get(Symbol.for("my-token"))).toBe(42);
+    expect(() => container.get(Symbol.for("other-token"))).toThrowError("No provider(s) found for other-token");
+    expect(container.get(OTHER_TOKEN)).toBe(2);
   });
 });
