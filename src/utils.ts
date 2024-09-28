@@ -22,3 +22,10 @@ export function getParentClasses(target: Class<unknown>): InjectableClass[] {
   }
   return parentClasses;
 }
+
+export function assertPresent<T>(value: T | null | undefined): T {
+  if (value === null || value === undefined) {
+    throw Error(`Expected value to be not null or undefined`);
+  }
+  return value;
+}

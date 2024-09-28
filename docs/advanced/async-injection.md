@@ -1,9 +1,6 @@
-# Async injection (experimental)
+# Async injection
 
-It is also possible to use a provider with an async factory function.
-
-> [!CAUTION]
-> This feature is currently **experimental** and has some limitations.
+It is also possible to use a provider with an asynchronous factory function.
 
 ## Async factory providers
 
@@ -32,40 +29,52 @@ const fooService = await container.getAsync(FooService);
 If you try to use `container.get(token)` or `inject(token)` for an async provider, an error will be thrown,
 as these methods only support synchronous injection. This restriction also applies if any indirect dependencies are async.
 
-## Constructor injection
-
-Just inject it using `injectAsync()` and resolve the promise when needed:
-
-```typescript
-class MyService {
-  constructor(private getFooService: Promise<FooService> = injectAsync(FooService)) {}
-
-  async someMethod() {
-    const fooService: FooService = await this.getFooService;
-    // ...
-  }
-}
-```
-
 ## Synchronous constructor injection
 
-Since Needle DI uses default parameters, and performs no static analysis (e.g. through reflection), it is not possible
-to use `inject()` in constructor injection, **even when the class is constructed within an asynchronous `.getAsync()` process**.
 
-This is because most providers are lazy, and those services will only be constructed on demand.
-
-A possible workaround for this restriction is to construct your service eagerly and bind a static value instead:
+You can inject your async dependencies synchronously, as long as you're in an async context.
 
 ```typescript
-const fooService = await getFooService();
+@injectable()
+class MyService {
+  constructor(
+    private foo = inject(FOO_TOKEN),
+    private bar = inject(BAR_TOKEN),
+  ) {}
 
-container.bind({
-  provide: FooService,
-  useValue: fooService,
-});
+  public printTokens(): string {
+    return `${this.foo} and ${this.bar}`;
+  }
+}
+
+const FOO_TOKEN = new InjectionToken<string>("FOO_TOKEN");
+const BAR_TOKEN = new InjectionToken<string>("BAR_TOKEN");
+
+const container = new Container();
+
+container.bindAll(
+  {
+    provide: FOO_TOKEN,
+    async: true,
+    useFactory: () =>
+      new Promise<string>((resolve) => {
+        setTimeout(() => resolve("Foo"), 100);
+      }),
+  },
+  {
+    provide: BAR_TOKEN,
+    async: true,
+    useFactory: () =>
+      new Promise<string>((resolve) => {
+        setTimeout(() => resolve("Bar"), 100);
+      }),
+  },
+);
+
+const myService = await container.getAsync(MyService);
+
+myService.printTokens() // will return "Foo and Bar";
 ```
 
-By eagerly constructing the service and binding it as a static value, you can avoid the need to work with promises in your constructors.
-
 > [!NOTE]
-> We know this is suboptimal, and we do have plans to remove this constraint in a future version.
+> Async dependencies are resolved sequentially. We may remove this restriction in a later version.

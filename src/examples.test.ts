@@ -1,6 +1,6 @@
 import { injectable } from "./decorators.js";
-import { bootstrap, Container, inject, injectAsync } from "./container.js";
-import { describe, expect, it, vitest } from "vitest";
+import { bootstrap, bootstrapAsync, Container, inject, injectAsync } from "./container.js";
+import { describe, expect, it, vi, vitest } from "vitest";
 import { InjectionToken } from "./tokens.js";
 
 @injectable()
@@ -729,5 +729,95 @@ describe("Container", () => {
     expect(container.get(Symbol.for("my-token"))).toBe(42);
     expect(() => container.get(Symbol.for("other-token"))).toThrowError("No provider(s) found for other-token");
     expect(container.get(OTHER_TOKEN)).toBe(2);
+  });
+
+  it("should support sync injection of async providers in async flow", async () => {
+    const constructed = vi.fn();
+
+    @injectable()
+    class OtherService {
+      public foo = inject(FOO_TOKEN);
+      public bar = inject(BAR_TOKEN);
+    }
+
+    @injectable()
+    class MyService {
+      private otherService = inject(OtherService);
+
+      constructor() {
+        constructed();
+      }
+
+      public printTokens(): string {
+        return `${this.otherService.foo} and ${this.otherService.bar}`;
+      }
+    }
+
+    const FOO_TOKEN = new InjectionToken<string>("FOO_TOKEN", {
+      async: true,
+      factory: () =>
+        new Promise<string>((resolve) => {
+          setTimeout(() => resolve("Foo"), 100);
+        }),
+    });
+    const BAR_TOKEN = new InjectionToken<string>("BAR_TOKEN", {
+      async: true,
+      factory: () =>
+        new Promise<string>((resolve) => {
+          setTimeout(() => resolve("Bar"), 100);
+        }),
+    });
+
+    const myService = await bootstrapAsync(MyService);
+
+    expect(myService.printTokens()).toBe("Foo and Bar");
+    expect(constructed).toHaveBeenCalledTimes(1);
+  });
+
+  it("should support sync injection of async providers in async flow (2)", async () => {
+    @injectable()
+    class MyService {
+      constructor(
+        private foo = inject(FOO_TOKEN),
+        private bar = inject(BAR_TOKEN_ALIAS),
+      ) {}
+
+      public printTokens(): string {
+        return `${this.foo} and ${this.bar}`;
+      }
+    }
+
+    const FOO_TOKEN = new InjectionToken<string>("FOO_TOKEN");
+    const BAR_TOKEN = new InjectionToken<string>("BAR_TOKEN");
+    const BAR_TOKEN_ALIAS = new InjectionToken<string>("BAR_TOKEN_ALIAS");
+
+    const container = new Container();
+
+    container.bindAll(
+      {
+        provide: FOO_TOKEN,
+        async: true,
+        useFactory: () =>
+          new Promise<string>((resolve) => {
+            setTimeout(() => resolve("Foo"), 100);
+          }),
+      },
+      {
+        provide: BAR_TOKEN,
+        async: true,
+        useFactory: () =>
+          new Promise<string>((resolve) => {
+            setTimeout(() => resolve("Bar"), 100);
+          }),
+      },
+      {
+        provide: BAR_TOKEN_ALIAS,
+        useExisting: BAR_TOKEN
+      }
+    );
+
+    const myService = await container.getAsync(MyService);
+
+    expect(myService.printTokens()).toBe("Foo and Bar");
   });
 });

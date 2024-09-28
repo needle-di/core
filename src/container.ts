@@ -10,6 +10,7 @@ import {
   isExistingProvider,
 } from "./providers.js";
 import { getInjectableTargets, isInjectable } from "./decorators.js";
+import { assertPresent } from "./utils.js";
 
 export class Container {
   private providers: ProviderMap = new Map();
@@ -81,9 +82,7 @@ export class Container {
 
     if (!this.singletons.has(token)) {
       if (providers.some(isAsyncFactoryProvider)) {
-        throw new Error(
-          `One or more providers for token ${toString(token)} are async, please use injectAsync() or container.getAsync() instead`,
-        );
+        throw new AsyncProvidersInSyncInjectionContextError(token);
       }
 
       this.singletons.set(
@@ -128,7 +127,7 @@ export class Container {
     const existingProviders = this.providers.get(token) ?? [];
 
     if (!this.singletons.has(token)) {
-      const values = await Promise.all(existingProviders.map((it) => constructAsync(it, this)));
+      const values = await Promise.all(existingProviders.map((it) => this.constructAsync(it, this)));
       this.singletons.set(token, values.flat());
     }
 
@@ -142,6 +141,41 @@ export class Container {
       );
     } else {
       return promisify(singletons.at(0));
+    }
+  }
+
+  private async constructAsync<T>(provider: Provider<T>, scope: Container): Promise<T[]> {
+    const originalScope = currentScope;
+    try {
+      currentScope = scope;
+      return await this.doConstructAsync(provider, scope);
+    } finally {
+      currentScope = originalScope;
+    }
+  }
+
+  private async doConstructAsync<T>(provider: Provider<T>, scope: Container): Promise<T[]> {
+    if (isFactoryProvider(provider) && provider.async) {
+      return await provider.useFactory().then((it) => [it]);
+    } else if (isExistingProvider(provider)) {
+      return scope.getAsync(provider.useExisting, { multi: true });
+    } else if (isClassProvider(provider) || isConstructorProvider(provider)) {
+      while (true) {
+        try {
+          return doConstruct(provider, scope);
+        } catch (e) {
+          if (e instanceof AsyncProvidersInSyncInjectionContextError) {
+            const values = await injectAsync(e.token, { multi: true, optional: true });
+            if (values) {
+              this.singletons.set(e.token, values);
+            }
+          } else {
+            throw e;
+          }
+        }
+      }
+    } else {
+      return doConstruct(provider, scope);
     }
   }
 
@@ -206,9 +240,11 @@ export class Container {
 
 let currentScope: Container | undefined = undefined;
 
+export function inject<T>(token: Token<T>, options: { multi: true }): T[];
 export function inject<T>(token: Token<T>, options: { optional: true }): T | undefined;
-export function inject<T>(token: Token<T>): T;
-export function inject<T>(token: Token<T>, options?: { optional: boolean }): T | undefined {
+export function inject<T>(token: Token<T>, options: { multi: true; optional: true }): T[] | undefined;
+export function inject<T>(token: Token<T>, options?: { optional?: boolean; multi?: boolean }): T;
+export function inject<T>(token: Token<T>, options?: { optional?: boolean; multi?: boolean }): T | T[] | undefined {
   if (currentScope === undefined) {
     if (options?.optional) return undefined;
     throw new Error("You can only invoke inject() from the injection context");
@@ -216,9 +252,17 @@ export function inject<T>(token: Token<T>, options?: { optional: boolean }): T |
   return currentScope.get(token, options);
 }
 
+export function injectAsync<T>(token: Token<T>, options: { multi: true }): Promise<T[]>;
 export function injectAsync<T>(token: Token<T>, options: { optional: true }): Promise<T | undefined>;
-export function injectAsync<T>(token: Token<T>): Promise<T>;
-export function injectAsync<T>(token: Token<T>, options?: { optional: boolean }): Promise<T | undefined> {
+export function injectAsync<T>(token: Token<T>, options: { multi: true; optional: true }): Promise<T[] | undefined>;
+export function injectAsync<T>(token: Token<T>, options?: { optional?: boolean; multi?: boolean }): Promise<T>;
+export function injectAsync<T>(
+  token: Token<T>,
+  options?: {
+    optional?: boolean;
+    multi?: boolean;
+  },
+): Promise<T | T[] | undefined> {
   if (currentScope === undefined) {
     if (options?.optional) return Promise.resolve(undefined);
     throw new Error("You can only invoke injectAsync() from the injection context");
@@ -231,16 +275,6 @@ function construct<T>(provider: Provider<T>, scope: Container): T[] {
   try {
     currentScope = scope;
     return doConstruct(provider, scope);
-  } finally {
-    currentScope = originalScope;
-  }
-}
-
-async function constructAsync<T>(provider: Provider<T>, scope: Container): Promise<T[]> {
-  const originalScope = currentScope;
-  try {
-    currentScope = scope;
-    return await doConstructAsync(provider, scope);
   } finally {
     currentScope = originalScope;
   }
@@ -267,14 +301,6 @@ function doConstruct<T>(provider: Provider<T>, scope: Container): T[] {
   }
 }
 
-async function doConstructAsync<T>(provider: Provider<T>, scope: Container): Promise<T[]> {
-  if (isFactoryProvider(provider) && provider.async) {
-    return await provider.useFactory().then((it) => [it]);
-  } else {
-    return doConstruct(provider, scope);
-  }
-}
-
 interface ProviderMap extends Map<Token<unknown>, Provider<unknown>[]> {
   get<T>(key: Token<T>): Provider<T>[] | undefined;
 
@@ -295,9 +321,10 @@ export function bootstrapAsync<T>(token: Token<T>): Promise<T> {
   return new Container().getAsync(token);
 }
 
-function assertPresent<T>(value: T | null | undefined): T {
-  if (value === null || value === undefined) {
-    throw Error(`Expected value to be not null or undefined`);
+class AsyncProvidersInSyncInjectionContextError<T> extends Error {
+  constructor(public token: Token<T>) {
+    super(
+      `Some providers for token ${toString(token)} are async, please use injectAsync() or container.getAsync() instead`,
+    );
   }
-  return value;
 }
