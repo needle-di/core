@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.6.0](https://github.com/dirkluijk/needle-di/compare/v0.5.0...v0.6.0) (2024-09-28)
+
+
+### Features
+
+* allow synchronous constructor injection of async providers ([#20](https://github.com/dirkluijk/needle-di/issues/20)) ([6cf3ec3](https://github.com/dirkluijk/needle-di/commit/6cf3ec3eabd88f541d6714b56ca0b70ab5e779a2))
+
 ## [0.5.0](https://github.com/dirkluijk/needle-di/compare/v0.4.0...v0.5.0) (2024-09-28)
 
 

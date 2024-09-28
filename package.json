@@ -1,6 +1,6 @@
 {
   "name": "needle-di",
-  "version": "0.5.0",
+  "version": "0.6.0",
   "description": "A simple TypeScript library for dependency injection",
   "license": "MIT",
   "keywords": [
