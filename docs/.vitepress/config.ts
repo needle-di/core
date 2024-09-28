@@ -51,6 +51,10 @@ export default defineConfig({
           { text: 'Tree-shaking', link: '/advanced/tree-shaking' },
           { text: 'Async injection', link: '/advanced/async-injection' },
         ]
+      },
+      {
+        text: 'Changelog',
+        link: 'https://github.com/dirkluijk/needle-di/blob/main/CHANGELOG.md'
       }
     ],
 

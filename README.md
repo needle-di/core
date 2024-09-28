@@ -51,12 +51,12 @@ Check out the [docs](https://needle-di.io/concepts/binding.html) to learn more!
 ## Installation
 
 ```
-npm install needle-di
+npm install --save needle-di
 ```
 
 ## Docs
 
-Check out our docs on our website.
+Check out our docs on [https://needle-di.io](https://needle-di.io/concepts/binding.html).
 
 ## License
 

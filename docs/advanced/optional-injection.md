@@ -4,7 +4,7 @@
 By default, when you try to inject something that isn't provided, Needle DI will throw an error.
 
 Alternatively, you can use optional injection, by passing `{ optional: true }`. Instead of throwing an error, it will
-now return `undefined`:
+now return the requested service, or `undefined` if not found:
 
 ```typescript
 import { inject } from "needle-di";
