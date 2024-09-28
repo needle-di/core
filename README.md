@@ -12,7 +12,7 @@ Needle DI is a lightweight, TypeScript-first library for dependency injection (D
 
 - Stand-alone: No additional dependencies required
 - Intended for both JavaScript-only and TypeScript projects
-- Supports [tree-shakeable injection tokens](#tree-shakeable-injection-tokens): optimize your builds for production.
+- Supports [tree-shakeable injection tokens](https://needle-di.io/advanced/tree-shaking.html): optimize your builds for production.
 - Inspired by [Angular](https://angular.dev/) and [InversifyJS](https://github.com/inversify/InversifyJS), familiar to developers coming from these frameworks.
 - Uses native [ECMAScript TC39 decorators](https://github.com/tc39/proposal-decorators) (currently stage 3)
 - No need for `experimentalDecorators` and `emitDecoratorMetadata`
@@ -46,7 +46,7 @@ const barService = container.get(BarService);
 //    ^? Type will be inferred as `BarService`
 ```
 
-Check out the [docs](#docs) to learn more!
+Check out the [docs](https://needle-di.io/concepts/binding.html) to learn more!
 
 ## Installation
 
