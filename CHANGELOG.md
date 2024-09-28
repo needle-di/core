@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.5.0](https://github.com/dirkluijk/needle-di/compare/v0.4.0...v0.5.0) (2024-09-28)
+
+
+### Documentation
+
+* add Vitepress site with Github Pages ([#18](https://github.com/dirkluijk/needle-di/issues/18)) ([245efbe](https://github.com/dirkluijk/needle-di/commit/245efbe4def6a1c0647cfc6c06c299968ad0eec9))
+
 ## [0.4.0](https://github.com/dirkluijk/needle-di/compare/v0.3.0...v0.4.0) (2024-09-26)
 
 
