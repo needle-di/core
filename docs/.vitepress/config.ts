@@ -4,7 +4,6 @@ import { defineConfig } from 'vitepress'
 export default defineConfig({
   title: "Needle DI",
   description: "A lightweight, type-safe Dependency Injection (DI) library",
-  base: '/needle-di/',
   themeConfig: {
     siteTitle: 'Needle DI',
     search: {
