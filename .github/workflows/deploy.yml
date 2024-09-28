@@ -1,13 +1,11 @@
 name: Deploy VitePress site to Pages
 
-on: [push]
-# todo: enable
-#on:
-#  push:
-#    branches: [main]
-#
-#  # Allows you to run this workflow manually from the Actions tab
-#  workflow_dispatch:
+on:
+  push:
+    branches: [main]
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
 
 # Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
 permissions:
