@@ -1,5 +1,3 @@
-import type { InjectableClass } from "./decorators.js";
-
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type Class<T> = new (...args: any[]) => T;
 
@@ -8,21 +6,33 @@ export interface AbstractClass<T> {
   name: string;
 }
 
-export function isClass(target: unknown): target is Class<unknown> | AbstractClass<unknown> {
+/**
+ * Type-guard to assert if the given object is an (abstract) class.
+ * @internal
+ */
+export function isClassLike(target: unknown): target is Class<unknown> | AbstractClass<unknown> {
   return typeof target === "function";
 }
 
-export function getParentClasses(target: Class<unknown>): InjectableClass[] {
-  const parentClasses: InjectableClass[] = [];
-  let currentClass = target as InjectableClass;
+/**
+ * Returns all parent classes of a given class.
+ * @internal
+ */
+export function getParentClasses(target: Class<unknown>): Class<unknown>[] {
+  const parentClasses: Class<unknown>[] = [];
+  let currentClass = target;
   while (Object.getPrototypeOf(currentClass).name) {
-    const parentClass: InjectableClass = Object.getPrototypeOf(currentClass);
+    const parentClass: Class<unknown> = Object.getPrototypeOf(currentClass);
     parentClasses.push(parentClass);
     currentClass = parentClass;
   }
   return parentClasses;
 }
 
+/**
+ * Ensures a given value is not null or undefined.
+ * @internal
+ */
 export function assertPresent<T>(value: T | null | undefined): T {
   if (value === null || value === undefined) {
     throw Error(`Expected value to be not null or undefined`);

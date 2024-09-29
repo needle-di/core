@@ -1,13 +1,13 @@
 # Tokens
 
-An injection token is a reference for the dependency injection (DI) container
-that refers to a service. When you need to obtain a service from the container, you should use this token.
+An injection token is a reference to a service in the dependency injection (DI) container. This token is used 
+to bind something to the container, and to obtain something from the container.
 
 Needle DI allows you to use many different types of tokens.
 
-## Class reference
+## Class constructor reference
 
-When the service that you provide is a class, you can use its class reference as a token.
+When the service that you provide is a class, you can use its constructor reference as a token.
 
 ```typescript
 container.bind({
@@ -59,8 +59,8 @@ const myNumber = container.get<number>(MY_MAGIC_NUMBER);
 
 ## `InjectionToken<T>`
 
-Instead of `string` or `symbol`, a better alternative is to construct an instance of `InjectionToken<T>`. This is basically a unique token object,
-that is referred by reference.
+Instead of `string` or `symbol`, a better alternative is to construct an instance of `InjectionToken<T>`. This is
+basically a unique token object, that is used by reference.
 
 > [!TIP]
 > When using TypeScript, this token can also hold a generic type. This enables better type-checking.

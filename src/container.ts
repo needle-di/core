@@ -13,8 +13,8 @@ import { getInjectableTargets, isInjectable } from "./decorators.js";
 import { assertPresent } from "./utils.js";
 
 export class Container {
-  private providers: ProviderMap = new Map();
-  private singletons: SingletonMap = new Map();
+  private readonly providers: ProviderMap = new Map();
+  private readonly singletons: SingletonMap = new Map();
 
   public bindAll<A>(p1: Provider<A>): this;
   public bindAll<A, B>(p1: Provider<A>, p2: Provider<B>): this;
@@ -89,12 +89,12 @@ export class Container {
     return this;
   }
 
-  bind<T>(provider: Provider<T>): this {
+  public bind<T>(provider: Provider<T>): this {
     const token = isConstructorProvider(provider) ? provider : provider.provide;
     const multi = isMultiProvider(provider);
 
     if (isExistingProvider(provider) && provider.provide === provider.useExisting) {
-      throw Error(`A provider with "useExisting" cannot refer to itself`);
+      throw Error(`The provider for token ${toString(token)} with "useExisting" cannot refer to itself.`);
     }
 
     if (!isExistingProvider(provider) && this.singletons.has(token)) {
@@ -106,7 +106,6 @@ export class Container {
     const existingProviders = this.providers.get(token) ?? [];
 
     if (multi && existingProviders.some((it) => !isMultiProvider(it))) {
-      // todo: should we be this strict, or only throw an error in mismatches upon retrieving?
       throw Error(
         `Cannot bind ${toString(token)} as multi-provider, since there is already a provider which is not a multi-provider.`,
       );
@@ -116,31 +115,23 @@ export class Container {
       );
     }
 
-    if (multi) {
-      this.providers.set(token, [...existingProviders, provider]);
-    } else {
-      if (existingProviders.length > 0) {
-        // todo: log warning, since we're overwriting a provider?
-        //  alternatively, provide both .bind() and .rebind() semantics?
-      }
-
-      this.providers.set(token, [provider]);
-    }
-
-    // todo: should support eagerly resolved providers or not?
+    this.providers.set(token, multi ? [...existingProviders, provider] : [provider]);
 
     return this;
   }
 
-  get<T>(token: Token<T>, options: { multi: true }): T[];
-  get<T>(token: Token<T>, options: { optional: true }): T | undefined;
-  get<T>(token: Token<T>, options: { multi: true; optional: true }): T[] | undefined;
-  get<T>(token: Token<T>, options?: { optional?: boolean; multi?: boolean }): T;
-  get<T>(token: Token<T>, options?: { optional?: boolean; multi?: boolean }): T | T[] | undefined {
+  public get<T>(token: Token<T>, options: { multi: true }): T[];
+  public get<T>(token: Token<T>, options: { optional: true }): T | undefined;
+  public get<T>(token: Token<T>, options: { multi: true; optional: true }): T[] | undefined;
+  public get<T>(token: Token<T>, options?: { optional?: boolean; multi?: boolean }): T;
+  public get<T>(token: Token<T>, options?: { optional?: boolean; multi?: boolean }): T | T[] | undefined {
     this.autoBindIfNeeded(token);
 
+    const optional = options?.optional ?? false;
+    const multi = options?.multi ?? false;
+
     if (!this.providers.has(token)) {
-      if (options?.optional) {
+      if (optional) {
         return undefined;
       }
       throw Error(`No provider(s) found for ${toString(token)}`);
@@ -155,12 +146,13 @@ export class Container {
 
       this.singletons.set(
         token,
-        providers.flatMap((it) => construct(it, this)),
+        providers.flatMap((it) => this.construct(it, this)),
       );
     }
 
     const singletons = assertPresent(this.singletons.get(token));
-    if (options?.multi === true) {
+
+    if (multi) {
       return singletons;
     } else if (singletons.length > 1) {
       throw Error(
@@ -168,15 +160,15 @@ export class Container {
           `Consider passing "{ multi: true }" to inject all values, or adjust your bindings accordingly.`,
       );
     } else {
-      return assertPresent(this.singletons.get(token)?.at(0));
+      return assertPresent(singletons.at(0));
     }
   }
 
-  async getAsync<T>(token: Token<T>, options: { multi: true }): Promise<T[]>;
-  async getAsync<T>(token: Token<T>, options: { optional: true }): Promise<T | undefined>;
-  async getAsync<T>(token: Token<T>, options: { multi: true; optional: true }): Promise<T[] | undefined>;
-  async getAsync<T>(token: Token<T>, options?: { optional?: boolean; multi?: boolean }): Promise<T>;
-  async getAsync<T>(
+  public async getAsync<T>(token: Token<T>, options: { multi: true }): Promise<T[]>;
+  public async getAsync<T>(token: Token<T>, options: { optional: true }): Promise<T | undefined>;
+  public async getAsync<T>(token: Token<T>, options: { multi: true; optional: true }): Promise<T[] | undefined>;
+  public async getAsync<T>(token: Token<T>, options?: { optional?: boolean; multi?: boolean }): Promise<T>;
+  public async getAsync<T>(
     token: Token<T>,
     options?: {
       optional?: boolean;
@@ -185,9 +177,12 @@ export class Container {
   ): Promise<T | T[] | undefined> {
     this.autoBindIfNeeded(token);
 
+    const optional = options?.optional ?? false;
+    const multi = options?.multi ?? false;
+
     if (!this.providers.has(token)) {
-      if (options?.optional) {
-        return Promise.resolve(undefined);
+      if (optional) {
+        return undefined;
       }
       throw Error(`No provider(s) found for ${toString(token)}`);
     }
@@ -200,8 +195,8 @@ export class Container {
     }
 
     const singletons = assertPresent(this.singletons.get(token));
-    if (options?.multi === true) {
-      return Promise.all(singletons.map((it) => promisify(it)));
+    if (multi) {
+      return Promise.all(singletons.map(promisify));
     } else if (singletons.length > 1) {
       throw Error(
         `Requesting a single value for ${toString(token)}, but multiple values were provided. ` +
@@ -209,6 +204,16 @@ export class Container {
       );
     } else {
       return promisify(singletons.at(0));
+    }
+  }
+
+  private construct<T>(provider: Provider<T>, scope: Container): T[] {
+    const originalScope = currentScope;
+    try {
+      currentScope = scope;
+      return doConstruct(provider, scope);
+    } finally {
+      currentScope = originalScope;
     }
   }
 
@@ -223,22 +228,22 @@ export class Container {
   }
 
   private async doConstructAsync<T>(provider: Provider<T>, scope: Container): Promise<T[]> {
-    if (isFactoryProvider(provider) && provider.async) {
-      return await provider.useFactory().then((it) => [it]);
+    if (isAsyncFactoryProvider(provider)) {
+      return [await provider.useFactory()];
     } else if (isExistingProvider(provider)) {
       return scope.getAsync(provider.useExisting, { multi: true });
     } else if (isClassProvider(provider) || isConstructorProvider(provider)) {
       while (true) {
         try {
           return doConstruct(provider, scope);
-        } catch (e) {
-          if (e instanceof AsyncProvidersInSyncInjectionContextError) {
-            const values = await injectAsync(e.token, { multi: true, optional: true });
+        } catch (error) {
+          if (error instanceof AsyncProvidersInSyncInjectionContextError) {
+            const values = await injectAsync(error.token, { multi: true, optional: true });
             if (values) {
-              this.singletons.set(e.token, values);
+              this.singletons.set(error.token, values);
             }
           } else {
-            throw e;
+            throw error;
           }
         }
       }
@@ -270,7 +275,6 @@ export class Container {
         ...new Set(
           targetClasses
             .filter((targetClass) => targetClass !== token)
-            // .filter((targetClass) => Object.getPrototypeOf(targetClass) === token)
             .map((targetClass) => {
               let currentClass = targetClass;
               while (Object.getPrototypeOf(currentClass) && Object.getPrototypeOf(currentClass) !== token) {
@@ -289,13 +293,14 @@ export class Container {
         });
       });
     } else if (!this.providers.has(token) && isInjectionToken(token) && token.options?.factory) {
-      if (!token.options.async) {
+      const async = token.options.async;
+      if (!async) {
         this.bind({
           provide: token,
           async: false,
           useFactory: token.options.factory,
         });
-      } else if (token.options.async) {
+      } else if (async) {
         this.bind({
           provide: token,
           async: true,
@@ -308,6 +313,9 @@ export class Container {
 
 let currentScope: Container | undefined = undefined;
 
+/**
+ * Injects a service within the current injection context, using the token provided.
+ */
 export function inject<T>(token: Token<T>, options: { multi: true }): T[];
 export function inject<T>(token: Token<T>, options: { optional: true }): T | undefined;
 export function inject<T>(token: Token<T>, options: { multi: true; optional: true }): T[] | undefined;
@@ -320,11 +328,17 @@ export function inject<T>(token: Token<T>, options?: { optional?: boolean; multi
   return currentScope.get(token, options);
 }
 
-export function injectAsync<T>(token: Token<T>, options: { multi: true }): Promise<T[]>;
-export function injectAsync<T>(token: Token<T>, options: { optional: true }): Promise<T | undefined>;
-export function injectAsync<T>(token: Token<T>, options: { multi: true; optional: true }): Promise<T[] | undefined>;
-export function injectAsync<T>(token: Token<T>, options?: { optional?: boolean; multi?: boolean }): Promise<T>;
-export function injectAsync<T>(
+/**
+ * Injects a service asynchronously within the current injection context, using the token provided.
+ */
+export async function injectAsync<T>(token: Token<T>, options: { multi: true }): Promise<T[]>;
+export async function injectAsync<T>(token: Token<T>, options: { optional: true }): Promise<T | undefined>;
+export async function injectAsync<T>(
+  token: Token<T>,
+  options: { multi: true; optional: true },
+): Promise<T[] | undefined>;
+export async function injectAsync<T>(token: Token<T>, options?: { optional?: boolean; multi?: boolean }): Promise<T>;
+export async function injectAsync<T>(
   token: Token<T>,
   options?: {
     optional?: boolean;
@@ -332,20 +346,10 @@ export function injectAsync<T>(
   },
 ): Promise<T | T[] | undefined> {
   if (currentScope === undefined) {
-    if (options?.optional) return Promise.resolve(undefined);
+    if (options?.optional) return undefined;
     throw new Error("You can only invoke injectAsync() from the injection context");
   }
   return currentScope.getAsync(token, options);
-}
-
-function construct<T>(provider: Provider<T>, scope: Container): T[] {
-  const originalScope = currentScope;
-  try {
-    currentScope = scope;
-    return doConstruct(provider, scope);
-  } finally {
-    currentScope = originalScope;
-  }
 }
 
 // see: https://github.com/tc39/proposal-promise-try
@@ -360,9 +364,9 @@ function doConstruct<T>(provider: Provider<T>, scope: Container): T[] {
     return [new provider.useClass()];
   } else if (isValueProvider(provider)) {
     return [provider.useValue];
-  } else if (isFactoryProvider(provider) && !provider.async) {
+  } else if (isFactoryProvider(provider)) {
     return [provider.useFactory()];
-  } else if (isFactoryProvider(provider) && provider.async) {
+  } else if (isAsyncFactoryProvider(provider)) {
     throw Error("Invalid state");
   } else {
     return scope.get(provider.useExisting, { multi: true });
@@ -381,14 +385,25 @@ interface SingletonMap extends Map<Token<unknown>, unknown[]> {
   set<T>(token: Token<T>, value: T[]): this;
 }
 
+/**
+ * Bootstraps a new container and obtains a service using the provided token.
+ */
 export function bootstrap<T>(token: Token<T>): T {
   return new Container().get(token);
 }
 
+/**
+ * Bootstraps a new container and obtains a service asynchronously using the provided token.
+ */
 export function bootstrapAsync<T>(token: Token<T>): Promise<T> {
   return new Container().getAsync(token);
 }
 
+/**
+ * An error that occurs when an async provider is requested in a synchronous context.
+ *
+ * @internal
+ */
 class AsyncProvidersInSyncInjectionContextError<T> extends Error {
   constructor(public token: Token<T>) {
     super(

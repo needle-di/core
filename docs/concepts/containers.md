@@ -38,7 +38,7 @@ container.bindAll(
 );
 ```
 
-Learn more about the different kind of [providers](./providers) you can use for binding.
+Learn more about the different types of [providers](./providers) you can use for binding.
 
 ## Constructing & retrieving services
 
