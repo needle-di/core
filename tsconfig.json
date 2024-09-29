@@ -3,5 +3,5 @@
   "compilerOptions": {
     "outDir": "dist"
   },
-  "exclude": ["**/*.test.ts"]
+  "exclude": ["./**/*.test.ts"]
 }

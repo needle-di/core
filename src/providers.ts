@@ -13,7 +13,7 @@ export type ConstructorProvider<T> = Class<T>;
 
 export interface ClassProvider<T> {
   provide: Token<T>;
-  useClass: Class<T>;
+  useClass: Class<NoInfer<T>>;
   multi?: true;
 }
 
