@@ -16,7 +16,75 @@ export class Container {
   private providers: ProviderMap = new Map();
   private singletons: SingletonMap = new Map();
 
-  bindAll<T>(...providers: Provider<T>[]): this {
+  public bindAll<A>(p1: Provider<A>): this;
+  public bindAll<A, B>(p1: Provider<A>, p2: Provider<B>): this;
+  public bindAll<A, B, C>(p1: Provider<A>, p2: Provider<B>, p3: Provider<C>): this;
+  public bindAll<A, B, C, D>(
+    p1: Provider<A>,
+    p2: Provider<B>,
+    p3: Provider<C>,
+    p4: Provider<D>
+  ): this;
+  public bindAll<A, B, C, D, E>(
+    p1: Provider<A>,
+    p2: Provider<B>,
+    p3: Provider<C>,
+    p4: Provider<D>,
+    p5: Provider<E>
+  ): this;
+  public bindAll<A, B, C, D, E, F>(
+    p1: Provider<A>,
+    p2: Provider<B>,
+    p3: Provider<C>,
+    p4: Provider<D>,
+    p5: Provider<E>,
+    p6: Provider<F>
+  ): this;
+  public bindAll<A, B, C, D, E, F, G>(
+    p1: Provider<A>,
+    p2: Provider<B>,
+    p3: Provider<C>,
+    p4: Provider<D>,
+    p5: Provider<E>,
+    p6: Provider<F>,
+    p7: Provider<G>
+  ): this;
+  public bindAll<A, B, C, D, E, F, G, H>(
+    p1: Provider<A>,
+    p2: Provider<B>,
+    p3: Provider<C>,
+    p4: Provider<D>,
+    p5: Provider<E>,
+    p6: Provider<F>,
+    p7: Provider<G>,
+    p8: Provider<H>
+  ): this;
+  public bindAll<A, B, C, D, E, F, G, H, I>(
+    p1: Provider<A>,
+    p2: Provider<B>,
+    p3: Provider<C>,
+    p4: Provider<D>,
+    p5: Provider<E>,
+    p6: Provider<F>,
+    p7: Provider<G>,
+    p8: Provider<H>,
+    p9: Provider<I>
+  ): this;
+  public bindAll<A, B, C, D, E, F, G, H, I>(
+    p1: Provider<A>,
+    p2: Provider<B>,
+    p3: Provider<C>,
+    p4: Provider<D>,
+    p5: Provider<E>,
+    p6: Provider<F>,
+    p7: Provider<G>,
+    p8: Provider<H>,
+    p9: Provider<I>,
+    // eslint-disable-next-line
+    ...providers: Provider<any>[]
+  ): this;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  public bindAll(...providers: Provider<any>[]): this {
     providers.forEach((it) => this.bind(it));
     return this;
   }
