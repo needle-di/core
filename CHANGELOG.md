@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.6.1](https://github.com/dirkluijk/needle-di/compare/v0.6.0...v0.6.1) (2024-09-29)
+
+
+### Bug Fixes
+
+* fix incorrect type-inference on bindAll() method ([#22](https://github.com/dirkluijk/needle-di/issues/22)) ([7a2e3bd](https://github.com/dirkluijk/needle-di/commit/7a2e3bdf2b22d194cefb0dcd3d4b2ddb9589516b))
+
+
+### Documentation
+
+* improved docs and added JSDocs ([#24](https://github.com/dirkluijk/needle-di/issues/24)) ([7084676](https://github.com/dirkluijk/needle-di/commit/708467639a60603b63cb7405ecaeaadaf2979562))
+
 ## [0.6.0](https://github.com/dirkluijk/needle-di/compare/v0.5.0...v0.6.0) (2024-09-28)
 
 
