@@ -16,7 +16,8 @@ export function injectable<C extends Class<unknown>>(): ClassDecorator<C> {
           writable: true,
         });
       } else {
-        parentClass[injectableSymbol] = [...parentClass[injectableSymbol], target];
+        const injectableParentClass = parentClass as InjectableClass;
+        injectableParentClass[injectableSymbol] = [...injectableParentClass[injectableSymbol], target];
       }
     });
 

@@ -812,12 +812,62 @@ describe("Container", () => {
       },
       {
         provide: BAR_TOKEN_ALIAS,
-        useExisting: BAR_TOKEN
-      }
+        useExisting: BAR_TOKEN,
+      },
     );
 
     const myService = await container.getAsync(MyService);
 
     expect(myService.printTokens()).toBe("Foo and Bar");
+  });
+
+  it("should not support sync injection of async providers outside constructors", async () => {
+    class MyService {
+      constructor(
+        private foo: string,
+        private bar: string,
+      ) {}
+
+      public printTokens(): string {
+        return `${this.foo} and ${this.bar}`;
+      }
+    }
+
+    const FOO_TOKEN = new InjectionToken<string>("FOO_TOKEN");
+    const BAR_TOKEN = new InjectionToken<string>("BAR_TOKEN");
+
+    const container = new Container();
+
+    container.bindAll(
+      {
+        provide: FOO_TOKEN,
+        async: true,
+        useFactory: () =>
+          new Promise<string>((resolve) => {
+            setTimeout(() => resolve("Foo"), 100);
+          }),
+      },
+      {
+        provide: BAR_TOKEN,
+        async: true,
+        useFactory: () =>
+          new Promise<string>((resolve) => {
+            setTimeout(() => resolve("Bar"), 100);
+          }),
+      },
+      {
+        provide: MyService,
+        useFactory: () => {
+          const foo = inject(FOO_TOKEN);
+          const bar = inject(BAR_TOKEN);
+
+          return new MyService(foo, bar);
+        },
+      },
+    );
+
+    expect(async () => await container.getAsync(MyService)).rejects.toThrowError(
+      "use injectAsync() or container.getAsync() instead",
+    );
   });
 });

@@ -8,10 +8,10 @@ There are many ways to register your services for dependency injection.
 
 ## Terminology
 
-In the following section, we will use the following terms:
+It's important to understand the terminology here:
 
-- A **service** is whatever you want the DI container to create;
-- A **token** is the unique reference for that service;
+- A **service** (or **value**) is the actual thing that the DI container should create;
+- A **token** is the unique reference to that service;
 - A **provider** states how the service should be created.
 
 ::: details Check an example
@@ -22,12 +22,12 @@ const container = new Container();
 
 container.bind({
   provide: MyService,
-  useValue: new MyService(),
+  useFactory: () => new MyService(),
 });
 ```
 
-In this case, `MyService` is the **token**, and `useValue: new MyService()` is the **provider** and states how the
-**service** will be created.
+In this case, `MyService` is the **token**, `new MyService()` is the **service** (or **value**), and the factory **provider**
+states how this service will be created.
 :::
 
 ## Types of providers
@@ -53,7 +53,7 @@ container.bind(Logger);
 
 This will register a singleton for `Logger` that gets lazily constructed.
 
-However, `useClass` may also refer to a child class of `Logger`:
+Note that `useClass` may also refer to a child class of `Logger`:
 
 ```typescript
 container.bind({

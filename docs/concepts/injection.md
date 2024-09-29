@@ -7,7 +7,7 @@ There are several ways to do this.
 ## Constructor injection
 
 Needle DI strongly recommends **constructor injection**, since it makes the dependencies
-of your class explicit, making it more type-safe, and allows for easier unit testing.
+of your class explicit, more type-safe, and allows for easier unit testing.
 
 Instead of using `container.get(token)`, you can use the `inject(token)` function here,
 so no reference to an actual container is needed.

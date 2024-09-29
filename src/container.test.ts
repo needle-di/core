@@ -34,7 +34,7 @@ describe("Container API", () => {
   });
 
   it("injectAsync", async () => {
-    expect(() => injectAsync(MyService)).toThrowError("You can only invoke injectAsync() from the injection context");
+    expect(injectAsync(MyService)).rejects.toThrowError("You can only invoke injectAsync() from the injection context");
 
     const container = new Container();
     const token = new InjectionToken<string>("some-token");

@@ -30,7 +30,7 @@ class BarService {
 ```
 As you can see, Needle DI uses default parameter values for constructor injection.
 
-The `@injectable` decorator eliminates the need to manually register services. To construct the `BarService`, you have 
+The `@injectable` decorator eliminates the need to register services manually. To construct the `BarService`, you have 
 to create a dependency injection container, and use the `container.get()` method:
 
 ```typescript
