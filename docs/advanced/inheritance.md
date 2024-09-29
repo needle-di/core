@@ -36,22 +36,25 @@ const myServices = container.get(ExampleService, { multi: true });
 //        and will be the same instances as "fooService" and "barService'
 ```
 
+> [!IMPORTANT]
+> Make sure your subclasses are imported somewhere. Otherwise, the auto-binding might not work since their
+> decorators are not invoked. Even worse, your subclasses might not even appear in your final bundle due to 
+> [tree-shaking](/advanced/tree-shaking).
+> 
+> To prevent this, consider to register your subclasses explicitly:
+> 
+> ```typescript
+> container.bindAll(FooService, BarService);
+> ```
+
 ## Manual binding
 
 Under the hood, the example above would be the same as:
 
 ```typescript
 container.bindAll(
-  {
-    provide: FooService,
-    useClass: FooService,
-    multi: true,
-  },
-  {
-    provide: BarService,
-    useClass: BarService,
-    multi: true,
-  },
+  FooService,
+  BarService,
   {
     provide: MyAbstractService,
     useExisting: FooService,

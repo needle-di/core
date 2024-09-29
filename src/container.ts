@@ -8,6 +8,7 @@ import {
   isAsyncFactoryProvider,
   isMultiProvider,
   isExistingProvider,
+  existingProviderAlreadyDefined,
 } from "./providers.js";
 import { getInjectableTargets, isInjectable } from "./decorators.js";
 import { assertPresent } from "./utils.js";
@@ -19,18 +20,13 @@ export class Container {
   public bindAll<A>(p1: Provider<A>): this;
   public bindAll<A, B>(p1: Provider<A>, p2: Provider<B>): this;
   public bindAll<A, B, C>(p1: Provider<A>, p2: Provider<B>, p3: Provider<C>): this;
-  public bindAll<A, B, C, D>(
-    p1: Provider<A>,
-    p2: Provider<B>,
-    p3: Provider<C>,
-    p4: Provider<D>
-  ): this;
+  public bindAll<A, B, C, D>(p1: Provider<A>, p2: Provider<B>, p3: Provider<C>, p4: Provider<D>): this;
   public bindAll<A, B, C, D, E>(
     p1: Provider<A>,
     p2: Provider<B>,
     p3: Provider<C>,
     p4: Provider<D>,
-    p5: Provider<E>
+    p5: Provider<E>,
   ): this;
   public bindAll<A, B, C, D, E, F>(
     p1: Provider<A>,
@@ -38,7 +34,7 @@ export class Container {
     p3: Provider<C>,
     p4: Provider<D>,
     p5: Provider<E>,
-    p6: Provider<F>
+    p6: Provider<F>,
   ): this;
   public bindAll<A, B, C, D, E, F, G>(
     p1: Provider<A>,
@@ -47,7 +43,7 @@ export class Container {
     p4: Provider<D>,
     p5: Provider<E>,
     p6: Provider<F>,
-    p7: Provider<G>
+    p7: Provider<G>,
   ): this;
   public bindAll<A, B, C, D, E, F, G, H>(
     p1: Provider<A>,
@@ -57,7 +53,7 @@ export class Container {
     p5: Provider<E>,
     p6: Provider<F>,
     p7: Provider<G>,
-    p8: Provider<H>
+    p8: Provider<H>,
   ): this;
   public bindAll<A, B, C, D, E, F, G, H, I>(
     p1: Provider<A>,
@@ -68,7 +64,7 @@ export class Container {
     p6: Provider<F>,
     p7: Provider<G>,
     p8: Provider<H>,
-    p9: Provider<I>
+    p9: Provider<I>,
   ): this;
   public bindAll<A, B, C, D, E, F, G, H, I>(
     p1: Provider<A>,
@@ -285,13 +281,17 @@ export class Container {
         ),
       ];
 
-      immediateSubclasses.forEach((immediateSubClass) => {
-        this.bind({
-          provide: token,
-          useExisting: immediateSubClass,
-          multi: true,
+      const existingProviders = this.providers.get(token) ?? [];
+
+      immediateSubclasses
+        .filter((subClass) => !existingProviderAlreadyDefined(subClass, existingProviders))
+        .forEach((subClass) => {
+          this.bind({
+            provide: token,
+            useExisting: subClass,
+            multi: true,
+          });
         });
-      });
     } else if (!this.providers.has(token) && isInjectionToken(token) && token.options?.factory) {
       const async = token.options.async;
       if (!async) {
