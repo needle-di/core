@@ -95,7 +95,3 @@ export function isExistingProvider<T>(provider: Provider<T>): provider is Existi
 export function isMultiProvider<T>(provider: Provider<T>): boolean {
   return "provide" in provider && "multi" in provider && provider.multi === true;
 }
-
-export function existingProviderAlreadyDefined(token: Token<unknown>, providers: Provider<unknown>[]) {
-  return providers.some(it => isExistingProvider(it) && (it.useExisting === token || it.provide === token));
-}

@@ -14,6 +14,7 @@ export function injectable<C extends Class<unknown>>(): ClassDecorator<C> {
         Object.defineProperty(parentClass, injectableSymbol, {
           value: [target],
           writable: true,
+          enumerable: false,
         });
       } else {
         const injectableParentClass = parentClass as InjectableClass;
