@@ -6,6 +6,16 @@ outline: deep
 
 Needle DI is a small, lightweight JavaScript library for dependency injection.
 
+## Why another library?
+
+There are many existing dependency injection libraries. We're certainly not claiming
+to be unique. However, we hope that our combination of [design principles](#design-principles) may be exactly what
+you're looking for.
+
+If you have been using  [Angular](https://angular.dev/guide/di) or [NestJS](https://docs.nestjs.com/providers#dependency-injection)
+before, this library might look familiar. That's because we took a lot of inspiration from existing frameworks, but we 
+also made some different decisions. Make sure to refer to the documentation.
+
 ## Why dependency injection?
 
 Dependency Injection (DI) is a design pattern in (object-oriented) programming where an object's or function's
@@ -55,7 +65,17 @@ uses stage 3 decorators, to push for ECMAScript standards.
 
 ## When to use Needle DI?
 
-In most application frameworks for web or Node.js (e.g. [Angular](https://angular.dev/guide/di), [NestJS](https://docs.nestjs.com/providers#dependency-injection)), a dependency injection solution is
-already included. Therefore, Needle DI is mainly intended for smaller "vanilla" JavaScript/TypeScript projects.
+* **If your framework doesn't offer a built-in solution.** Most application frameworks for web or Node.js
+  (such as [Angular](https://angular.dev/guide/di) or [NestJS](https://docs.nestjs.com/providers#dependency-injection)),
+  offer a dependency injection solution which is already included. Therefore, Needle DI is mainly intended for
+  smaller ("vanilla") projects.
+* **If you deeply care about type-safety.** So if you're using TypeScript, you can use this as an opportunity to
+  prevent mistakes in your dependency injection.
+* **If you care about bundle-size**. Needle DI has only ~40 kB of unpacked size, but also supports tree-shaking. Besides
+  that, no reflection or decorator metadata is needed.
+* **If you want less dependencies**. Needle DI has no further (peer) dependencies.
 
-In fact, Needle DI was originally created for TypeScript AWS Lambda functions, but you can also use this for small web projects.
+## Why is feature X not included?
+
+There is currently no specific roadmap, but we' will consider any feature request. Please [submit 
+a ticket](https://github.com/dirkluijk/needle-di/issues/new), and we'll consider a solution that fits our design principles.
