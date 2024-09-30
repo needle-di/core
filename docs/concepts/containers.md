@@ -65,5 +65,5 @@ import { bootstrap } from "needle-di";
 const barService = bootstrap(BarService);
 ```
 
-This is useful if you solely depend on [auto-binding](/concepts/binding#auto-binding) and/or [three-shakeable injection tokens](/advanced/tree-shaking)
+This is useful if you solely depend on [auto-binding](/concepts/binding#auto-binding) and/or [tree-shakeable injection tokens](/advanced/tree-shaking)
 and therefore don't need to register anything manually into your container.
