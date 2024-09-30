@@ -77,7 +77,10 @@ export default defineConfig({
       },
     ],
 
-    socialLinks: [{ icon: "github", link: "https://github.com/dirkluijk/needle-di" }],
+    socialLinks: [
+      { icon: "github", link: "https://github.com/dirkluijk/needle-di" },
+      { icon: "npm", link: "https://www.npmjs.com/package/needle-di" },
+    ],
 
     footer: {
       message: "Released under the MIT License",
