@@ -75,6 +75,10 @@ export default defineConfig({
         text: "Changelog",
         link: "https://github.com/dirkluijk/needle-di/blob/main/CHANGELOG.md",
       },
+      {
+        text: 'StackBlitz demo',
+        link: 'https://stackblitz.com/edit/needle-di'
+      }
     ],
 
     socialLinks: [
