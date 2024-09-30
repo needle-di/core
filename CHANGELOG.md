@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.7.0](https://github.com/dirkluijk/needle-di/compare/v0.6.1...v0.7.0) (2024-09-30)
+
+
+### Features
+
+* auto-register parent classes for manual bindings as well ([#26](https://github.com/dirkluijk/needle-di/issues/26)) ([d3d909f](https://github.com/dirkluijk/needle-di/commit/d3d909fc603c74d4c81968d64545091b6bd7e437))
+
 ## [0.6.1](https://github.com/dirkluijk/needle-di/compare/v0.6.0...v0.6.1) (2024-09-29)
 
 
