@@ -39,3 +39,17 @@ export function assertPresent<T>(value: T | null | undefined): T {
   }
   return value;
 }
+
+/**
+ * @internal
+ */
+export function windowedSlice<T>(array: T[], step?: 2): [T, T][];
+export function windowedSlice<T>(array: T[], step: number): T[][];
+export function windowedSlice<T>(array: T[], step = 2): T[][] {
+  const result: T[][] = [];
+  array.some((_, i) => {
+    if (i + step > array.length) return true;
+    result.push(array.slice(i, i + step));
+  });
+  return result;
+}

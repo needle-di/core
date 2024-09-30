@@ -8,10 +8,9 @@ import {
   isAsyncFactoryProvider,
   isMultiProvider,
   isExistingProvider,
-  existingProviderAlreadyDefined,
 } from "./providers.js";
 import { getInjectableTargets, isInjectable } from "./decorators.js";
-import { assertPresent } from "./utils.js";
+import { assertPresent, getParentClasses, windowedSlice } from "./utils.js";
 
 export class Container {
   private readonly providers: ProviderMap = new Map();
@@ -101,17 +100,43 @@ export class Container {
 
     const existingProviders = this.providers.get(token) ?? [];
 
+    // ignore this provider if it was already provided as existingProvider
+    if (
+      isExistingProvider(provider) &&
+      isMultiProvider(provider) &&
+      this.existingProviderAlreadyProvided(token, provider.useExisting)
+    ) {
+      return this;
+    }
+
     if (multi && existingProviders.some((it) => !isMultiProvider(it))) {
       throw Error(
         `Cannot bind ${toString(token)} as multi-provider, since there is already a provider which is not a multi-provider.`,
       );
     } else if (!multi && existingProviders.some((it) => isMultiProvider(it))) {
-      throw Error(
-        `Cannot bind ${toString(token)} as provider, since there are already provider(s) that are multi-providers.`,
-      );
+      if (!existingProviders.every(isExistingProvider)) {
+        throw Error(
+          `Cannot bind ${toString(token)} as provider, since there are already provider(s) that are multi-providers.`,
+        );
+      }
     }
 
     this.providers.set(token, multi ? [...existingProviders, provider] : [provider]);
+
+    // inheritance support: also bind parent classes to their immediate child classes
+    if (isClassToken(token) && (isClassProvider(provider) || isConstructorProvider(provider))) {
+      windowedSlice([token, ...getParentClasses(token)]).forEach(([childClass, parentClass]) => {
+        const parentProvider: Provider<typeof childClass> = {
+          provide: parentClass,
+          useExisting: childClass,
+          multi: true,
+        };
+        const existingParentProviders = this.providers.get(parentClass) ?? [];
+        if (!this.existingProviderAlreadyProvided(parentClass, childClass)) {
+          this.providers.set(parentClass, [...existingParentProviders, parentProvider]);
+        }
+      });
+    }
 
     return this;
   }
@@ -265,33 +290,6 @@ export class Container {
             multi: true,
           });
         });
-
-      // inheritance support: only register immediate subclasses of the token with useExisting
-      const immediateSubclasses = [
-        ...new Set(
-          targetClasses
-            .filter((targetClass) => targetClass !== token)
-            .map((targetClass) => {
-              let currentClass = targetClass;
-              while (Object.getPrototypeOf(currentClass) && Object.getPrototypeOf(currentClass) !== token) {
-                currentClass = Object.getPrototypeOf(currentClass);
-              }
-              return currentClass;
-            }),
-        ),
-      ];
-
-      const existingProviders = this.providers.get(token) ?? [];
-
-      immediateSubclasses
-        .filter((subClass) => !existingProviderAlreadyDefined(subClass, existingProviders))
-        .forEach((subClass) => {
-          this.bind({
-            provide: token,
-            useExisting: subClass,
-            multi: true,
-          });
-        });
     } else if (!this.providers.has(token) && isInjectionToken(token) && token.options?.factory) {
       const async = token.options.async;
       if (!async) {
@@ -308,6 +306,12 @@ export class Container {
         });
       }
     }
+  }
+
+  private existingProviderAlreadyProvided(token: Token<unknown>, existingToken: Token<unknown>) {
+    return (this.providers.get(token) ?? []).some(
+      (it) => isExistingProvider(it) && it.provide === token && it.useExisting === existingToken,
+    );
   }
 }
 

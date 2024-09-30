@@ -276,6 +276,38 @@ describe("Container", () => {
 
       container.bindAll(
         {
+          provide: FooService,
+          useClass: FooService,
+          multi: true,
+        },
+        {
+          provide: BarService,
+          useClass: BarService,
+          multi: true,
+        },
+        {
+          provide: SpecialBarService,
+          useClass: SpecialBarService,
+          multi: true,
+        },
+        {
+          provide: SpecialBazService,
+          useClass: SpecialBazService,
+          multi: true,
+        },
+
+        // not needed, but should not interfere with auto-binding of parent classes:
+        {
+          provide: BarService,
+          useExisting: SpecialBarService,
+          multi: true,
+        },
+        {
+          provide: BazService,
+          useExisting: SpecialBazService,
+          multi: true,
+        },
+        {
           provide: AbstractService,
           useExisting: FooService,
           multi: true,
@@ -288,48 +320,6 @@ describe("Container", () => {
         {
           provide: AbstractService,
           useExisting: BazService,
-          multi: true,
-        },
-        // todo: eliminate this one from auto-binding
-        // {
-        //   provide: AbstractService,
-        //   useExisting: SpecialBarService,
-        //   multi: true
-        // },
-        // todo: eliminate this one from auto-binding
-        // {
-        //   provide: AbstractService,
-        //   useExisting: SpecialBazService,
-        //   multi: true
-        // },
-        {
-          provide: FooService,
-          useClass: FooService,
-          multi: true,
-        },
-        {
-          provide: BarService,
-          useClass: BarService,
-          multi: true,
-        },
-        {
-          provide: BarService,
-          useExisting: SpecialBarService,
-          multi: true,
-        },
-        {
-          provide: SpecialBarService,
-          useClass: SpecialBarService,
-          multi: true,
-        },
-        {
-          provide: BazService,
-          useClass: SpecialBazService,
-          multi: true,
-        },
-        {
-          provide: SpecialBazService,
-          useClass: SpecialBazService,
           multi: true,
         },
       );
@@ -375,6 +365,28 @@ describe("Container", () => {
 
       container.bindAll(
         {
+          provide: FooService,
+          useClass: FooService,
+          multi: true,
+        },
+        {
+          provide: BarService,
+          useClass: BarService,
+          multi: true,
+        },
+        {
+          provide: SpecialBarService,
+          useClass: SpecialBarService,
+          multi: true,
+        },
+        {
+          provide: SpecialBazService,
+          useClass: SpecialBazService,
+          multi: true,
+        },
+
+        // not needed, but should not interfere with auto-binding of parent classes:
+        {
           provide: AbstractService,
           useExisting: FooService,
           multi: true,
@@ -389,46 +401,9 @@ describe("Container", () => {
           useExisting: BazService,
           multi: true,
         },
-        // todo: eliminate this one from auto-binding
-        // {
-        //   provide: AbstractService,
-        //   useExisting: SpecialBarService,
-        //   multi: true
-        // },
-        // todo: eliminate this one from auto-binding
-        // {
-        //   provide: AbstractService,
-        //   useExisting: SpecialBazService,
-        //   multi: true
-        // },
-        {
-          provide: FooService,
-          useClass: FooService,
-          multi: true,
-        },
-        {
-          provide: BarService,
-          useClass: BarService,
-          multi: true,
-        },
         {
           provide: BarService,
           useExisting: SpecialBarService,
-          multi: true,
-        },
-        {
-          provide: SpecialBarService,
-          useClass: SpecialBarService,
-          multi: true,
-        },
-        {
-          provide: BazService,
-          useClass: SpecialBazService,
-          multi: true,
-        },
-        {
-          provide: SpecialBazService,
-          useClass: SpecialBazService,
           multi: true,
         },
       );
@@ -575,7 +550,7 @@ describe("Container", () => {
       expect(abstractServices).not.toBeUndefined();
       expect(abstractServices).toHaveLength(4);
 
-      const [abstractServiceFoo, abstractServiceBar, abstractServiceSpecialBar, abstractServiceSpecialBaz] =
+      const [abstractServiceSpecialBaz, abstractServiceBar, abstractServiceSpecialBar, abstractServiceFoo] =
         abstractServices;
 
       expect(abstractServiceFoo).toBeInstanceOf(FooService);
@@ -869,5 +844,47 @@ describe("Container", () => {
     expect(async () => await container.getAsync(MyService)).rejects.toThrowError(
       "use injectAsync() or container.getAsync() instead",
     );
+  });
+
+  it("should auto-bind parent classes (without decorators)", () => {
+    abstract class ExampleService {
+      private x = Math.random();
+    }
+
+    class FooService extends ExampleService {
+      private foo = Math.random();
+    }
+
+    class BarService extends ExampleService {
+      private bar = Math.random();
+    }
+
+    const container = new Container();
+
+    container.bindAll(FooService, BarService);
+
+    expect(container.get(ExampleService, { multi: true })).toHaveLength(2);
+  });
+
+  it("should auto-bind parent classes (with decorators)", () => {
+    abstract class ExampleService {
+      private x = Math.random();
+    }
+
+    @injectable()
+    class FooService extends ExampleService {
+      private foo = Math.random();
+    }
+
+    @injectable()
+    class BarService extends ExampleService {
+      private bar = Math.random();
+    }
+
+    const container = new Container();
+
+    container.bindAll(FooService, BarService);
+
+    expect(container.get(ExampleService, { multi: true })).toHaveLength(2);
   });
 });

@@ -224,14 +224,8 @@ describe("Providers", () => {
       const container = new Container();
 
       container
-        .bind({
-          provide: FooService,
-          useClass: FooService,
-        })
-        .bind({
-          provide: BarService,
-          useClass: BarService,
-        })
+        .bind(FooService)
+        .bind(BarService)
         .bind({
           provide: AbstractService,
           useExisting: FooService,
