@@ -5,10 +5,10 @@ layout: home
 hero:
   name: "Needle DI 💉"
   text: |
-    Dependency injection made easy
+    Dependency injection without reflection
   tagline: |
     A lightweight, type-safe 
-    Dependency Injection library
+    dependency injection library
     for JavaScript and TypeScript projects
   actions:
     - theme: brand
