@@ -23,7 +23,7 @@ Needle DI is a lightweight, TypeScript-first library for dependency injection (D
 Here’s a simple example using constructor injection to inject one service into another.
 
 ```typescript
-import { injectable, inject } from "needle-di";
+import { injectable, inject } from "@needle-di/core";
 
 @injectable()
 class FooService {}
@@ -39,7 +39,7 @@ The `@injectable` decorator eliminates the need to manually register services. T
 dependency injection container, and use the `container.get()` method:
 
 ```typescript
-import { Container } from "needle-di";
+import { Container } from "@needle-di/core";
 
 const container = new Container();
 const barService = container.get(BarService);

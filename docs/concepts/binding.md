@@ -9,7 +9,7 @@ The easiest way to register your class for automatic dependency injection, is by
 applying the `@injectable()` decorator to your class:
 
 ```typescript
-import { injectable } from "needle-di";
+import { injectable } from "@needle-di/core";
 
 @injectable()
 class FooService {
@@ -21,7 +21,7 @@ This will automatically bind `FooService` as a singleton service. To request it 
 you can use the `.get()` method on the [container](./containers):
 
 ```typescript
-import { Container } from "needle-di";
+import { Container } from "@needle-di/core";
 
 const container = new Container();
 const fooService = container.get(FooService);
@@ -50,7 +50,7 @@ If you don't want to use the `@injectable()` decorator, for example if you don't
 class that you cannot decorate (from another library), you can manually register your service with the `.bind()` method:
 
 ```typescript
-import { Container } from "needle-di";
+import { Container } from "@needle-di/core";
 
 const container = new Container();
 

@@ -13,7 +13,7 @@ Instead of using `container.get(token)`, you can use the `inject(token)` functio
 so no reference to an actual container is needed.
 
 ```typescript
-import { inject, injectable } from "needle-di";
+import { inject, injectable } from "@needle-di/core";
 
 @injectable()
 class MyService {
@@ -45,7 +45,7 @@ class MyService {
 Alternatively, you can also initialize your dependencies as (private) fields:
 
 ```typescript
-import { inject, injectable } from "needle-di";
+import { inject, injectable } from "@needle-di/core";
 
 @injectable()
 class MyService {

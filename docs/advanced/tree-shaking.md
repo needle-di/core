@@ -24,7 +24,7 @@ Since we cannot decorate this class, the alternative is to bind it using
 an [injection token](/concepts/tokens#injectiontoken-t):
 
 ```typescript
-import { InjectionToken } from "needle-di";
+import { InjectionToken } from "@needle-di/core";
 
 const MY_TOKEN = new InjectionToken<SomeHeavyClass>("MY_TOKEN");
 
@@ -45,7 +45,7 @@ However, there also an option to provide a `factory` function in your `Injection
 which will remove the need to bind it to your container:
 
 ```typescript
-import { InjectionToken } from "needle-di";
+import { InjectionToken } from "@needle-di/core";
 
 const MY_TOKEN = new InjectionToken<SomeHeavyClass>(
   "MY_TOKEN",
