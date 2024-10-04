@@ -16,7 +16,7 @@ It's important to understand the terminology here:
 
 ::: details Check an example
 ```typescript
-import { Container } from "needle-di";
+import { Container } from "@needle-di/core";
 
 const container = new Container();
 

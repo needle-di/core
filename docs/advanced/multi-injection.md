@@ -6,7 +6,7 @@ By default, when you bind an existing token again, it will overwrite any previou
 However, it is also possible to register multiple values for the same token:
 
 ```typescript
-import { Container } from "needle-di";
+import { Container } from "@needle-di/core";
 
 const container = new Container();
 

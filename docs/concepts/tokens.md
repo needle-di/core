@@ -66,7 +66,7 @@ basically a unique token object, that is used by reference.
 > When using TypeScript, this token can also hold a generic type. This enables better type-checking.
 
 ```typescript
-import { InjectionToken } from "needle-di";
+import { InjectionToken } from "@needle-di/core";
 
 // create some injection tokens
 const MY_NUMBER = new InjectionToken<number>("MY_NUMBER");

@@ -7,7 +7,7 @@ Alternatively, you can use optional injection, by passing `{ optional: true }`. 
 now return the requested service, or `undefined` if not found:
 
 ```typescript
-import { inject } from "needle-di";
+import { inject } from "@needle-di/core";
 
 class MyService {
   constructor(

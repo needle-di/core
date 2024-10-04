@@ -12,6 +12,9 @@ permissions:
 jobs:
   release-please:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
     steps:
       - uses: googleapis/release-please-action@v4
         id: release
@@ -30,6 +33,8 @@ jobs:
       - run: npm run build
         if: ${{ steps.release.outputs.release_created }}
       - run: npm run test
+        if: ${{ steps.release.outputs.release_created }}
+      - run: npx jsr publish --allow-dirty
         if: ${{ steps.release.outputs.release_created }}
       - run: npm publish
         env:

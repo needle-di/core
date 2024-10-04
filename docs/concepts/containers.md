@@ -7,7 +7,7 @@ The dependency injection (DI) container will keep track of all bindings and hold
 create it, simply construct one:
 
 ```typescript
-import { Container } from "needle-di";
+import { Container } from "@needle-di/core";
 
 const container = new Container();
 ```
@@ -60,7 +60,7 @@ If you don't need to interact with the DI container at all, you can also use the
 instead. This will internally create a new container and return the requested service directly:
 
 ```typescript
-import { bootstrap } from "needle-di";
+import { bootstrap } from "@needle-di/core";
 
 const barService = bootstrap(BarService);
 ```

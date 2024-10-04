@@ -78,4 +78,4 @@ uses stage 3 decorators, to push for ECMAScript standards.
 ## Why is feature X not included?
 
 There is currently no specific roadmap, but we' will consider any feature request. Please [submit 
-a ticket](https://github.com/dirkluijk/needle-di/issues/new), and we'll consider a solution that fits our design principles.
+a ticket](https://github.com/needle-di/core/issues/new), and we'll consider a solution that fits our design principles.

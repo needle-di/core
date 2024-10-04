@@ -1,5 +1,5 @@
 {
-  "name": "needle-di",
+  "name": "@needle-di/core",
   "version": "0.7.0",
   "description": "A simple TypeScript library for dependency injection",
   "license": "MIT",
@@ -22,7 +22,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/dirkluijk/needle-di.git"
+    "url": "git+https://github.com/needle-di/core.git"
   },
   "type": "module",
   "module": "dist/index.js",
