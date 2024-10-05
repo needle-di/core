@@ -13,7 +13,7 @@ export default defineConfig({
     },
 
     editLink: {
-      pattern: "https://github.com/needle-ci/core/edit/main/docs/:path",
+      pattern: "https://github.com/needle-di/core/edit/main/docs/:path",
     },
 
     lastUpdated: {
@@ -31,11 +31,11 @@ export default defineConfig({
             items: [
               {
                 text: `v${version}`,
-                link: `https://github.com/needle-ci/core/releases/tag/v${version}`,
+                link: `https://github.com/needle-di/core/releases/tag/v${version}`,
               },
               {
                 text: "Changelog",
-                link: "https://github.com/needle-ci/core/releases",
+                link: "https://github.com/needle-di/core/releases",
               },
             ],
           },
@@ -73,7 +73,7 @@ export default defineConfig({
       },
       {
         text: "Changelog",
-        link: "https://github.com/needle-ci/core/blob/main/CHANGELOG.md",
+        link: "https://github.com/needle-di/core/blob/main/CHANGELOG.md",
       },
       {
         text: 'StackBlitz demo',
@@ -82,7 +82,7 @@ export default defineConfig({
     ],
 
     socialLinks: [
-      { icon: "github", link: "https://github.com/needle-ci/core" },
+      { icon: "github", link: "https://github.com/needle-di/core" },
       { icon: "npm", link: "https://www.npmjs.com/package/@needle-di/core" },
     ],
 
