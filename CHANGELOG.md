@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.8.0](https://github.com/needle-di/core/compare/v0.7.0...v0.8.0) (2024-10-05)
+
+
+### Miscellaneous Chores
+
+* migrate package to @needle-di/core + JavaScript Registry (JSR) adoption ([a3f523a](https://github.com/needle-di/core/commit/a3f523a05971343fd15faccdc012eec8e1e0f9c8))
+
 ## [0.7.0](https://github.com/needle-ci/core/compare/v0.6.1...v0.7.0) (2024-09-30)
 
 
