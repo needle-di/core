@@ -7,6 +7,10 @@ export const injectableSymbol = Symbol("injectable");
 
 export type InjectableClass<T = unknown> = (Class<T> | AbstractClass<T>) & { [injectableSymbol]: Class<unknown>[] };
 
+/**
+ * The @injectable() decorator allows you to automatically bind a class as singleton service
+ * when requesting it from a DI container.
+ */
 export function injectable<C extends Class<unknown>>(): ClassDecorator<C> {
   return (target) => {
     getParentClasses(target).forEach((parentClass) => {

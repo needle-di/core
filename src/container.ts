@@ -12,6 +12,10 @@ import {
 import { getInjectableTargets, isInjectable } from "./decorators.js";
 import { assertPresent, getParentClasses, windowedSlice } from "./utils.js";
 
+/**
+ * A dependency injection (DI) container will keep track of all bindings
+ * and hold the actual instances of your services.
+ */
 export class Container {
   private readonly providers: ProviderMap = new Map();
   private readonly singletons: SingletonMap = new Map();
