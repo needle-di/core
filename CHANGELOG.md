@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.8.1](https://github.com/needle-di/core/compare/v0.8.0...v0.8.1) (2024-10-05)
+
+
+### Bug Fixes
+
+* add @release-it/bumper as dependency to fix bumping issues ([#31](https://github.com/needle-di/core/issues/31)) ([0acc865](https://github.com/needle-di/core/commit/0acc865784d5137a242e728593ed4738f1a77955))
+
 ## [0.8.0](https://github.com/needle-di/core/compare/v0.7.0...v0.8.0) (2024-10-05)
 
 
