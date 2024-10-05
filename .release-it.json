@@ -1,9 +1,0 @@
-{
-  "$schema": "https://unpkg.com/release-it@17/schema/release-it.json",
-  "plugins": {
-    "@release-it/bumper": {
-      "in": "jsr.json",
-      "out": "jsr.json"
-    }
-  }
-}
