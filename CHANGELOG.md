@@ -1,5 +1,23 @@
 # Changelog
 
+## [0.8.2](https://github.com/needle-di/core/compare/v0.8.1...v0.8.2) (2024-10-05)
+
+
+### Bug Fixes
+
+* fix JSR bumping issues by adopting Release Please config ([#33](https://github.com/needle-di/core/issues/33)) ([977fc94](https://github.com/needle-di/core/commit/977fc9457e91b1f2640e6e217973ad9684c82dc7))
+
+
+### Documentation
+
+* fix incorrect Github links ([60783f3](https://github.com/needle-di/core/commit/`60783f3f4800ca64c676c31bfebbf93c20a2123b`))
+
+
+### Miscellaneous Chores
+
+* add release-please bootstrap file ([bc6ee60](https://github.com/needle-di/core/commit/bc6ee6002697ba9c0255f3f800db9747456c927e))
+* fix changelog generation ([1da6bde](https://github.com/needle-di/core/commit/1da6bde5247c08e9d472358e6dc70faad41f9772))
+
 ## [0.8.1](https://github.com/needle-di/core/compare/v0.8.0...v0.8.1) (2024-10-05)
 
 
