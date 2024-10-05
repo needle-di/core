@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.8.3](https://github.com/needle-di/core/compare/v0.8.2...v0.8.3) (2024-10-05)
+
+
+### Bug Fixes
+
+* fix Release Me tagging strategy ([#39](https://github.com/needle-di/core/issues/39)) ([21a182b](https://github.com/needle-di/core/commit/21a182b7eef543fbcdcba056c841c4ccc528a7e8))
+
 ## [0.8.2](https://github.com/needle-di/core/compare/v0.8.1...v0.8.2) (2024-10-05)
 
 
