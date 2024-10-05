@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.8.4](https://github.com/needle-di/core/compare/v0.8.3...v0.8.4) (2024-10-05)
+
+
+### Documentation
+
+* add remaining missing JSDoc documentation ([b9ffc3d](https://github.com/needle-di/core/commit/b9ffc3d51ab4ed6c24f7fae3b51b3907c2b0851f))
+
 ## [0.8.3](https://github.com/needle-di/core/compare/v0.8.2...v0.8.3) (2024-10-05)
 
 
