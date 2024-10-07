@@ -55,6 +55,12 @@ Check out the [docs](https://needle-di.io/concepts/binding.html) to learn more!
 npm install --save @needle-di/core
 ```
 
+Needle DI also works with [Deno](https://deno.com/) and is distributed on [JSR](https://jsr.io/@needle-di/core) as well:
+
+```bash
+ deno add @needle-di/core
+ ```
+
 ## Docs
 
 Check out our docs on [https://needle-di.io](https://needle-di.io/concepts/binding.html).

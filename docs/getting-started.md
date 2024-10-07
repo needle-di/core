@@ -7,8 +7,14 @@ outline: deep
 Just install it using your favorite package manager.
 
 ```bash
-npm install --save needle-di
+npm install --save @needle-di/core
 ```
+
+Needle DI also works with [Deno](https://deno.com/) and is distributed on [JSR](https://jsr.io/@needle-di/core) as well.
+
+```bash
+ deno add @needle-di/core
+ ```
 
 ## Basic example
 
