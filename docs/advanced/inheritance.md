@@ -94,6 +94,9 @@ container.bindAll(
 
 This enables you to inject all instances of `ExampleService` using multi-injection:
 ```typescript
+const fooService = container.get(FooService);
+const barService = container.get(BarService);
+
 const myServices = container.get(ExampleService, { multi: true });
 //    ^? Type will be inferred as `ExampleService[]`
 //        and will be the same instances as "fooService" and "barService'
