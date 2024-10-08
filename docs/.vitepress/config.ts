@@ -1,5 +1,6 @@
 import { defineConfig } from "vitepress";
 import { version } from "../../package.json";
+import { JSR_ICON } from "./jsr.icon.js";
 
 // https://vitepress.dev/reference/site-config
 export default defineConfig({
@@ -84,6 +85,7 @@ export default defineConfig({
     socialLinks: [
       { icon: "github", link: "https://github.com/needle-di/core" },
       { icon: "npm", link: "https://www.npmjs.com/package/@needle-di/core" },
+      { icon: { svg: JSR_ICON }, link: "https://jsr.io/@needle-di/core" },
     ],
 
     footer: {
