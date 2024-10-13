@@ -4,17 +4,64 @@ outline: deep
 
 # Getting started
 
+## Installation
+
 Just install it using your favorite package manager.
 
-```bash
-npm install --save @needle-di/core
+Needle DI is published to [NPM](https://www.npmjs.com/package/@needle-di/core) and [JSR](https://jsr.io/@needle-di/core), 
+and is also compatible with [Deno](https://deno.com/).
+
+::: code-group
+```bash [npm]
+npm install @needle-di/core
 ```
 
-Needle DI also works with [Deno](https://deno.com/) and is distributed on [JSR](https://jsr.io/@needle-di/core) as well.
+```bash [yarn]
+yarn add @needle-di/core
+```
 
-```bash
- deno add @needle-di/core
- ```
+```bash [pnpm]
+pnpm install @needle-di/core
+```
+
+```bash [deno]
+deno add jsr:@needle-di/core
+```
+:::
+
+## Transpiler settings
+
+Needle DI uses [ECMAScript stage 3 decorators](https://github.com/tc39/proposal-decorators).
+
+If you're using Deno, you can run your code as-is. However, when using Node.js or a browser as runtime,
+you will need to transpile your code first, since decorators are [not yet supported](https://github.com/tc39/proposal-decorators/issues/476).
+
+Make sure to use `ES2022` or lower as target:
+
+::: code-group
+```json [tsc (tsconfig.json)]
+{
+  "compilerOptions": {
+    "target": "ES2022"
+  }
+}
+```
+
+```javascript [vite (vite.config.mjs)]
+export default defineConfig({
+  esbuild: {
+    target: 'es2022',
+    // ...
+  },
+  // ...
+});
+```
+
+```bash [esbuild]
+esbuild app.js --target=es2022
+```
+:::
+
 
 ## Basic example
 
