@@ -5,7 +5,7 @@
 [![NPM version](http://img.shields.io/npm/v/@needle-di/core.svg)](https://www.npmjs.com/package/@needle-di/core)
 [![JSR version](http://img.shields.io/jsr/v/@needle-di/core.svg)](https://jsr.io/@needle-di/core)
 [![NPM downloads](https://img.shields.io/npm/dm/@needle-di/core)](https://www.npmjs.com/package/@needle-di/core)
-[![Build status](https://github.com/needle-di/core/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/needle-di/core/actions/workflows/main.yml)
+[![Build status](https://github.com/needle-di/core/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/needle-di/core/actions/workflows/ci.yml)
 
 Needle DI is a lightweight, TypeScript-first library for dependency injection (DI). It is designed to be both easy to use and highly efficient.
 
