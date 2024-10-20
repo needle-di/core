@@ -25,13 +25,11 @@
     "url": "git+https://github.com/needle-di/core.git"
   },
   "type": "module",
-  "module": "dist/index.js",
+  "module": "./dist/index.js",
   "exports": "./dist/index.js",
-  "types": "dist/index.d.ts",
+  "types": "./dist/index.d.ts",
   "sideEffects": false,
-  "files": [
-    "dist/**/**"
-  ],
+  "files": ["./dist/**/**"],
   "scripts": {
     "build": "tsc",
     "build:watch": "tsc -w",
