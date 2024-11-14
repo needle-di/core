@@ -5,7 +5,7 @@
 [![NPM version](http://img.shields.io/npm/v/@needle-di/core.svg)](https://www.npmjs.com/package/@needle-di/core)
 [![JSR version](http://img.shields.io/jsr/v/@needle-di/core.svg)](https://jsr.io/@needle-di/core)
 [![NPM downloads](https://img.shields.io/npm/dm/@needle-di/core)](https://www.npmjs.com/package/@needle-di/core)
-[![Build status](https://github.com/needle-di/core/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/needle-di/core/actions/workflows/ci.yml)
+[![Build status](https://img.shields.io/github/actions/workflow/status/needle-di/core/ci.yml?branch=main&style=flat)](https://github.com/needle-di/core/actions/workflows/ci.yml)
 
 Needle DI is a lightweight, TypeScript-first library for dependency injection (DI). It is designed to be both easy to use and highly efficient.
 
@@ -55,11 +55,11 @@ Check out the [docs](https://needle-di.io/concepts/binding.html) to learn more!
 npm install --save @needle-di/core
 ```
 
-Needle DI also works with [Deno](https://deno.com/) and is distributed on [JSR](https://jsr.io/@needle-di/core) as well:
+Needle DI also works with [Deno](https://deno.com/) and is published to [JSR](https://jsr.io/@needle-di/core) as well:
 
 ```bash
- deno add @needle-di/core
- ```
+deno add jsr:@needle-di/core
+```
 
 ## Docs
 
