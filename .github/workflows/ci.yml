@@ -25,5 +25,5 @@ jobs:
           result-type: lines
           gist-token: ${{ secrets.RELEASE_PLEASE_TOKEN }} # if you want to upload badge to gist
           gist-url: https://gist.github.com/dirkluijk/db6fbd0d0d4c138655a89386c5bdbe41
-          upload-badge: ${{ github.base_ref == 'refs/heads/main' }}
+          upload-badge: ${{ github.ref == 'refs/heads/main' }}
           badge-text: 'coverage'
