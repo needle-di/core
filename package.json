@@ -35,7 +35,7 @@
     "build:watch": "tsc -w",
     "test": "vitest run && tsc -p tsconfig.test.json",
     "test:watch": "vitest",
-    "test:ci": "vitest run --silent --coverage",
+    "test:ci": "vitest run --silent --coverage --coverage.reporter=json-summary",
     "lint": "eslint src",
     "lint:fix": "eslint src --fix",
     "reformat": "prettier src/**/*.ts README.md --write",
