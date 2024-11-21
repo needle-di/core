@@ -35,8 +35,8 @@
   "scripts": {
     "check-types": "tsc",
     "check-types:watch": "tsc -w",
-    "transpile": "tsc -p tsconfig.task.transpile.json",
-    "build:watch": "tsc -w",
+    "build": "tsc -p tsconfig.build.json",
+    "build:watch": "tsc -p tsconfig.build.json -w",
     "test": "vitest run",
     "test:watch": "vitest",
     "test:ci": "vitest run --silent --coverage --coverage.reporter=json-summary",
