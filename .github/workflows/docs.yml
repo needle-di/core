@@ -1,4 +1,4 @@
-name: Deploy VitePress site to Pages
+name: 'Docs'
 
 on:
   push:
@@ -21,37 +21,46 @@ concurrency:
 
 jobs:
   build:
-    name: Build docs
+    name: 'Build docs'
+
     runs-on: ubuntu-latest
+
     steps:
-      - name: Checkout
+      - name: 'Clone repository'
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-      - name: Setup Node
+
+      - name: 'Install Node.js'
         uses: actions/setup-node@v4
         with:
           node-version: 22
-          cache: npm # or pnpm / yarn
-      - name: Setup Pages
+          cache: 'npm'
+
+      - name: 'Setup Pages'
         uses: actions/configure-pages@v4
-      - name: Install dependencies
+
+      - name: 'npm ci'
         run: npm ci
-      - name: Build with VitePress
+
+      - name: 'npm run docs:build'
         run: npm run docs:build
-      - name: Upload artifact
+
+      - name: 'Upload artifact for Pages'
         uses: actions/upload-pages-artifact@v3
         with:
           path: docs/.vitepress/dist
 
   deploy:
-    name: Deploy docs
+    name: 'Deploy docs'
+    needs: build
+
+    runs-on: ubuntu-latest
+
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
-    needs: build
-    runs-on: ubuntu-latest
+
     steps:
-      - name: Deploy to GitHub Pages
-        id: deployment
+      - name: 'Deploy to GitHub Pages'
         uses: actions/deploy-pages@v4

@@ -1,25 +1,40 @@
-name: Node.js CI
+name: 'CI'
 
-on: [push]
+on: [ push ]
 
 jobs:
-  build:
-    runs-on: ubuntu-latest
-
+  build_node:
+    name: "Build Node.js"
     strategy:
       matrix:
-        node-version: [22.x]
+        version: [20, 22, 23]
+
+    runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - name: 'Clone repository'
+        uses: actions/checkout@v4
+
+      - name: 'Install Node.js'
+        uses: actions/setup-node@v4
         with:
-          node-version: '22'
+          node-version: ${{ matrix.version }}
           cache: 'npm'
-      - run: npm install
-      - run: npm run lint
-      - run: npm run test:ci
-      - name: Publish coverage badge
+
+      - name: 'npm ci'
+        run: npm ci
+
+      - name: 'npm run check-types'
+        run: npm run check-types
+
+      - name: 'npm run lint'
+        run: npm run lint
+
+      - name: 'npm run test'
+        run: npm run test:ci
+        # todo: convert test:ci to a convention for env var detection "e.g. CI=true"
+
+      - name: 'Publish coverage badge'
         uses: wjervis7/vitest-badge-action@v1.0.0
         with:
           result-type: lines
@@ -27,3 +42,49 @@ jobs:
           gist-url: https://gist.github.com/dirkluijk/db6fbd0d0d4c138655a89386c5bdbe41
           upload-badge: ${{ github.ref == 'refs/heads/main' }}
           badge-text: 'coverage'
+
+  build_deno:
+    name: "Build Deno.js"
+    strategy:
+      matrix:
+        version: ['v2.x']
+
+    runs-on: ubuntu-latest
+
+    env:
+      DENO_DIR: '/tmp/.deno'
+
+    steps:
+      - name: 'Clone repository'
+        uses: actions/checkout@v4
+
+      - name: 'Install Deno'
+        uses: denoland/setup-deno@v2
+        with:
+          deno-version: ${{ matrix.version }}
+
+      - name: 'restore .deno dir'
+        uses: actions/cache/restore@v4
+        with:
+          path: ${{ env.DENO_DIR }}
+          key: deno_dir
+
+      - name: 'deno install'
+        run: deno install
+
+      - name: 'cache .deno dir'
+        uses: actions/cache/save@v4
+        with:
+          path: ${{ env.DENO_DIR }}
+          key: deno_dir
+
+      - name: 'deno check'
+        run: deno check **/*.ts
+
+      - name: 'deno lint'
+        run: deno run lint
+
+      - name: 'deno test'
+        # todo: use "deno run test:ci" when released:
+        # https://github.com/denoland/deno/pull/26836
+        run: deno run test

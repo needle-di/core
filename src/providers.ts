@@ -1,5 +1,5 @@
-import type { Token } from "./tokens.js";
-import { type Class, isClassLike } from "./utils.js";
+import type { Token } from "./tokens.ts";
+import { type Class, isClassLike } from "./utils.ts";
 
 /**
  * A provider states how, for a given token, a service should be constructed.

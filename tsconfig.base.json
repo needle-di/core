@@ -1,6 +1,36 @@
 {
-  "extends": "@total-typescript/tsconfig/tsc/no-dom/library",
-  "include": [
-    "./src/**/*"
-  ]
+  "extends": "@tsconfig/node20",
+  "compilerOptions": {
+    /* Reasonable default base options: */
+
+    // Of course, this is common practice in Node but also part of ES standards.
+    // todo: is there a way to enforce "with type"?
+    "resolveJsonModule": true,
+
+    // ESM-first please, yes.
+    "esModuleInterop": true,
+    "moduleDetection": "force",
+
+    // Of course, we don't want to check libraries. We shouldn't in any case.
+    "skipLibCheck": true,
+
+    // Well yes of course, should be compatible, right?
+    "allowJs": true,
+
+    "isolatedModules": true,
+
+    // Well, yes, good idea.
+    "verbatimModuleSyntax": true,
+
+    // Of course, we want strictness. Why is this not the default?
+    "strict": true,
+
+    // What, is this no included in strictness?
+    "noUncheckedIndexedAccess": true,
+    "noImplicitOverride": true,
+
+    // restrictions are determined by what kind of transpiler and/or bundler we use.
+    // so by default, we preserve it.
+    "module": "Node16",
+  }
 }

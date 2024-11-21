@@ -9,9 +9,9 @@ import type {
   ExistingProvider,
   FactoryProvider,
   ValueProvider,
-} from "./providers.js";
-import { InjectionToken } from "./tokens.js";
-import { Container, inject, injectAsync } from "./container.js";
+} from "./providers.ts";
+import { InjectionToken } from "./tokens.ts";
+import { Container, inject, injectAsync } from "./container.ts";
 
 describe("Type-safety", () => {
   describe("Providers API", () => {

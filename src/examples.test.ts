@@ -1,7 +1,7 @@
-import { injectable } from "./decorators.js";
-import { bootstrap, bootstrapAsync, Container, inject, injectAsync } from "./container.js";
+import { injectable } from "./decorators.ts";
+import { bootstrap, bootstrapAsync, Container, inject, injectAsync } from "./container.ts";
 import { describe, expect, it, vi, vitest } from "vitest";
-import { InjectionToken } from "./tokens.js";
+import { InjectionToken } from "./tokens.ts";
 
 @injectable()
 class OtherService {
