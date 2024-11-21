@@ -39,6 +39,7 @@ describe("Container API", () => {
     const container = new Container();
     const token = new InjectionToken<string>("some-token");
     const otherToken = new InjectionToken<string>("other-token");
+    const aliasToken = new InjectionToken<string>("alias-token");
 
     container
       .bind({
@@ -50,9 +51,14 @@ describe("Container API", () => {
         provide: token,
         async: true,
         useFactory: () => injectAsync(otherToken),
+      })
+      .bind({
+        provide: aliasToken,
+        useExisting: token,
       });
 
     expect(await container.getAsync(token)).toBe("foo");
+    expect(await container.getAsync(aliasToken)).toBe("foo");
   });
 
   it("bootstrap", () => {
