@@ -563,6 +563,59 @@ describe("Container", () => {
     });
   });
 
+  it("should not allow combination of multi=false and multi=true", () => {
+    const container = new Container();
+
+    expect(() =>
+      container.bindAll({ provide: "key", useValue: 1 }, { provide: "key", multi: true, useValue: 2 }),
+    ).toThrowError(
+      "Cannot bind key as multi-provider, since there is already a provider which is not a multi-provider.",
+    );
+
+    expect(() =>
+      container.bindAll({ provide: "otherKey", multi: true, useValue: 2 }, { provide: "otherKey", useValue: 1 }),
+    ).toThrowError(
+      "Cannot bind otherKey as provider, since there are already provider(s) that are multi-providers.",
+    );
+  });
+
+  it("existing provider may not refer to itself", () => {
+    const container = new Container();
+
+    expect(() => container.bind({ provide: "key", useExisting: "key" })).toThrowError(
+      `The provider for token key with "useExisting" cannot refer to itself.`,
+    );
+  });
+
+  it("requesting single value for multiple providers throws error", () => {
+    const container = new Container();
+
+    container.bindAll(
+      { provide: "key", multi: true, useValue: 1 },
+      { provide: "key", multi: true, useValue: 2 },
+      { provide: "asyncKey", multi: true, async: true, useFactory: async () => 1 },
+      { provide: "asyncKey", multi: true, async: true, useFactory: async () => 2 },
+    );
+
+    expect(() =>
+      container.get('key'),
+    ).toThrowError(
+      "Requesting a single value for key, but multiple values were provided.",
+    );
+
+    expect(container.getAsync("asyncKey")).rejects.toThrowError(
+      "Requesting a single value for asyncKey, but multiple values were provided.",
+    );
+  });
+
+  it("existing provider may not refer to itself", () => {
+    const container = new Container();
+
+    expect(() => container.bind({ provide: "key", useExisting: "key" })).toThrowError(
+      `The provider for token key with "useExisting" cannot refer to itself.`,
+    );
+  });
+
   it("should support flattening multi-providers (combination of multi and use-existing)", () => {
     const container = new Container();
 
@@ -762,6 +815,15 @@ describe("Container", () => {
       }
     }
 
+    class ServiceThatThrowsErrorInInit {
+      constructor(
+        private foo = inject(FOO_TOKEN),
+        private bar = inject(BAR_TOKEN_ALIAS),
+      ) {
+        throw Error("foo");
+      }
+    }
+
     const FOO_TOKEN = new InjectionToken<string>("FOO_TOKEN");
     const BAR_TOKEN = new InjectionToken<string>("BAR_TOKEN");
     const BAR_TOKEN_ALIAS = new InjectionToken<string>("BAR_TOKEN_ALIAS");
@@ -789,11 +851,14 @@ describe("Container", () => {
         provide: BAR_TOKEN_ALIAS,
         useExisting: BAR_TOKEN,
       },
+      ServiceThatThrowsErrorInInit,
     );
 
     const myService = await container.getAsync(MyService);
 
     expect(myService.printTokens()).toBe("Foo and Bar");
+
+    expect(container.getAsync(ServiceThatThrowsErrorInInit)).rejects.toThrowError("foo");
   });
 
   it("should not support sync injection of async providers outside constructors", async () => {

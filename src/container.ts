@@ -171,7 +171,7 @@ export class Container {
 
       this.singletons.set(
         token,
-        providers.flatMap((it) => this.construct(it, this)),
+        providers.flatMap((it) => this.construct(it)),
       );
     }
 
@@ -215,7 +215,7 @@ export class Container {
     const existingProviders = this.providers.get(token) ?? [];
 
     if (!this.singletons.has(token)) {
-      const values = await Promise.all(existingProviders.map((it) => this.constructAsync(it, this)));
+      const values = await Promise.all(existingProviders.map((it) => this.constructAsync(it)));
       this.singletons.set(token, values.flat());
     }
 
@@ -232,7 +232,7 @@ export class Container {
     }
   }
 
-  private construct<T>(provider: Provider<T>, scope: Container): T[] {
+  private construct<T>(provider: Provider<T>, scope: Container = this): T[] {
     const originalScope = currentScope;
     try {
       currentScope = scope;
@@ -242,7 +242,7 @@ export class Container {
     }
   }
 
-  private async constructAsync<T>(provider: Provider<T>, scope: Container): Promise<T[]> {
+  private async constructAsync<T>(provider: Provider<T>, scope: Container = this): Promise<T[]> {
     const originalScope = currentScope;
     try {
       currentScope = scope;
