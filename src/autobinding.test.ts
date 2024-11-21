@@ -1,7 +1,7 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { injectable } from "./decorators.js";
-import { Container } from "./container.js";
-import { InjectionToken } from "./tokens.js";
+import { injectable } from "./decorators.ts";
+import { Container } from "./container.ts";
+import { InjectionToken } from "./tokens.ts";
 
 const myServiceConstructorSpy = vi.fn();
 

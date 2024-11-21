@@ -1,7 +1,3 @@
 {
-  "extends": "./tsconfig.base.json",
-  "compilerOptions": {
-    "outDir": "dist"
-  },
-  "exclude": ["./**/*.test.ts"]
+  "extends": "./tsconfig.task.check-types.json"
 }

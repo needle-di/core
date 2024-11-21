@@ -1,0 +1,26 @@
+{
+  "extends": ["./tsconfig.base.json"],
+  "compilerOptions": {
+    // transpiling here, not checking. Yes... double-negatives.
+    "noEmit": false,
+
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
+
+    // please, yes.
+    "allowImportingTsExtensions": true,
+    "rewriteRelativeImportExtensions": true,
+
+    // yes, we're publishing a library here
+    "declaration": true,
+    "sourceMap": true,
+
+    "outDir": "dist"
+  },
+  "include": [
+    "./src/**/*.ts"
+  ],
+  "exclude": [
+    "./src/**/*.test.ts"
+  ],
+}

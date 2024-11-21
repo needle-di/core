@@ -1,4 +1,4 @@
-import { type AbstractClass, type Class, getParentClasses } from "./utils.js";
+import { type AbstractClass, type Class, getParentClasses } from "./utils.ts";
 
 // eslint-disable-next-line @typescript-eslint/no-invalid-void-type
 type ClassDecorator<C extends Class<unknown>> = (target: C) => C | void;

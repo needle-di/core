@@ -1,4 +1,4 @@
-import { type AbstractClass, type Class, isClassLike } from "./utils.js";
+import { type AbstractClass, type Class, isClassLike } from "./utils.ts";
 
 /**
  * A token is a reference to a service in the dependency injection (DI) container.

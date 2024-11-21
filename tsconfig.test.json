@@ -1,8 +1,0 @@
-{
-  "extends": "./tsconfig.base.json",
-  "include": ["./**/*.test.ts"],
-  "compilerOptions": {
-    "noEmit": true,
-    "lib": ["es2022", "dom", "dom.iterable"]
-  }
-}

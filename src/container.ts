@@ -1,4 +1,4 @@
-import { type Token, isClassToken, toString, isInjectionToken } from "./tokens.js";
+import { type Token, isClassToken, toString, isInjectionToken } from "./tokens.ts";
 import {
   isClassProvider,
   isFactoryProvider,
@@ -8,9 +8,9 @@ import {
   isAsyncFactoryProvider,
   isMultiProvider,
   isExistingProvider,
-} from "./providers.js";
-import { getInjectableTargets, isInjectable } from "./decorators.js";
-import { assertPresent, getParentClasses, windowedSlice } from "./utils.js";
+} from "./providers.ts";
+import { getInjectableTargets, isInjectable } from "./decorators.ts";
+import { assertPresent, getParentClasses, windowedSlice } from "./utils.ts";
 
 /**
  * A dependency injection (DI) container will keep track of all bindings
