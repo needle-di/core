@@ -3,6 +3,9 @@
   "compilerOptions": {
     /* Reasonable default base options: */
 
+    // No emitting by default.
+    "noEmit": true,
+
     // Of course, this is common practice in Node but also part of ES standards.
     // todo: is there a way to enforce "with type"?
     "resolveJsonModule": true,
@@ -29,8 +32,7 @@
     "noUncheckedIndexedAccess": true,
     "noImplicitOverride": true,
 
-    // restrictions are determined by what kind of transpiler and/or bundler we use.
-    // so by default, we preserve it.
-    "module": "Node16",
+    // Allow "Deno"-style imports
+    "allowImportingTsExtensions": true,
   }
 }

@@ -1,3 +1,6 @@
 {
-  "extends": "./tsconfig.task.check-types.json"
+  "extends": "./tsconfig.base.json",
+  "include": [
+    "./**/*.ts"
+  ]
 }
