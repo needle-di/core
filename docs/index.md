@@ -24,7 +24,7 @@ features:
   - title: Lightweight
     details: Small bundle-size, with support for tree-shakeable injection tokens
   - title: Modern
-    details: Written in ESM, suitable for both web and Node.js projects, uses ECMAScript stage 3 decorators
+    details: Written in ESM, suitable for browser and Node.js projects, native ECMAScript decorators
   - title: Type-safe
     details: TypeScript type definitions included, with smart type inference everywhere
 ---

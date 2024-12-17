@@ -3,8 +3,8 @@ name: 'CI'
 on: [ push ]
 
 jobs:
-  build_node:
-    name: "Build Node.js"
+  ci_node:
+    name: "CI on Node.js"
     strategy:
       matrix:
         version: [20, 22, 23]
@@ -43,8 +43,8 @@ jobs:
           upload-badge: ${{ github.ref == 'refs/heads/main' }}
           badge-text: 'coverage'
 
-  build_deno:
-    name: "Build Deno.js"
+  ci_deno:
+    name: "CI on Deno"
     strategy:
       matrix:
         version: ['v2.x']

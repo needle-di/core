@@ -31,10 +31,13 @@ deno add jsr:@needle-di/core
 
 ## Transpiler settings
 
-Needle DI uses [ECMAScript stage 3 decorators](https://github.com/tc39/proposal-decorators).
+Needle DI uses native [ECMAScript decorators](https://github.com/tc39/proposal-decorators), which are currently in
+[stage 3] of the TC39 standardization process.
 
-If you're using Deno, you can run your code as-is. However, when using Node.js or a browser as runtime,
-you will need to transpile your code first, since decorators are [not yet supported](https://github.com/tc39/proposal-decorators/issues/476).
+[stage 3]: https://github.com/tc39/proposals#stage-3
+
+If you're using Deno, you can run your code as-is. However, when running on Node.js or in a browser,
+you might need to transpile your code first, as your runtime might [not have implemented it yet](https://github.com/tc39/proposal-decorators/issues/476).
 
 Make sure to use `ES2022` or lower as target:
 

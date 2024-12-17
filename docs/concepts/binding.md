@@ -32,8 +32,9 @@ const fooService = container.get(FooService);
 * It is also a **singleton**: the first time a `FooService` is injected, a new instance is constructed, but it will reuse this instance whenever it needs to be injected again.
 
 > [!NOTE]
-> Since Needle DI uses native [ECMAScript TC39 decorators](https://github.com/tc39/proposal-decorators)
-> (which is currently in [stage 3](https://github.com/tc39/proposals#stage-3)), you will need to transpile your code in order to use it in a browser or in Node.JS. 
+> Since Needle DI uses native [ECMAScript decorators](https://github.com/tc39/proposal-decorators)
+> (which are currently in [stage 3](https://github.com/tc39/proposals#stage-3)), you will need to transpile your code in 
+> order to use it in a browser or in Node.js. 
 > 
 > All modern transpilers (including [TypeScript], [esbuild], [Webpack], [Babel]) do have support for stage 3 decorators. If you
 > don't want to depend on transpilation, you can bind your services [manually](#manual-binding) instead, without using
