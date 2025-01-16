@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.10.0](https://github.com/needle-di/core/compare/v0.9.0...v0.10.0) (2025-01-16)
+
+
+### Features
+
+* auto-bind container to itself ([#52](https://github.com/needle-di/core/issues/52)) ([86936f6](https://github.com/needle-di/core/commit/86936f6459d92ffdd4efaa452f9cb1c129ec558b))
+
 ## [0.9.0](https://github.com/needle-di/core/compare/v0.8.4...v0.9.0) (2025-01-16)
 
 
