@@ -1,5 +1,6 @@
 import type { Token } from "./tokens.ts";
 import { type Class, isClassLike } from "./utils.ts";
+import type { Container } from './container.ts';
 
 /**
  * A provider states how, for a given token, a service should be constructed.
@@ -45,7 +46,7 @@ export interface FactoryProvider<T> {
   provide: Token<T>;
   async?: false;
   multi?: true;
-  useFactory: () => NoInfer<T>;
+  useFactory: (container: Container) => NoInfer<T>;
 }
 
 /**
@@ -56,7 +57,7 @@ export interface AsyncFactoryProvider<T> {
   provide: Token<T>;
   async: true;
   multi?: true;
-  useFactory: () => Promise<NoInfer<T>>;
+  useFactory: (container: Container) => Promise<NoInfer<T>>;
 }
 
 /**
