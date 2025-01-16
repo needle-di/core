@@ -20,6 +20,13 @@ export class Container {
   private readonly providers: ProviderMap = new Map();
   private readonly singletons: SingletonMap = new Map();
 
+  constructor() {
+    this.bind({
+      provide: Container,
+      useValue: this,
+    });
+  }
+
   public bindAll<A>(p1: Provider<A>): this;
   public bindAll<A, B>(p1: Provider<A>, p2: Provider<B>): this;
   public bindAll<A, B, C>(p1: Provider<A>, p2: Provider<B>, p3: Provider<C>): this;
