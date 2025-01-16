@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.9.0](https://github.com/needle-di/core/compare/v0.8.4...v0.9.0) (2025-01-16)
+
+
+### Features
+
+* pass container instance to factory providers ([#50](https://github.com/needle-di/core/issues/50)) ([1faf2dc](https://github.com/needle-di/core/commit/1faf2dc025594ab913ec18afaa244ab99579b1eb))
+
 ## [0.8.4](https://github.com/needle-di/core/compare/v0.8.3...v0.8.4) (2024-10-05)
 
 
