@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { Container } from "./container.ts";
+import { Container, inject } from './container.ts';
 import { InjectionToken } from "./tokens.ts";
 import { injectable } from "./decorators.ts";
 
@@ -223,13 +223,10 @@ describe("Providers", () => {
 
       const container = new Container();
 
-      container
-        .bind(FooService)
-        .bind(BarService)
-        .bind({
-          provide: AbstractService,
-          useExisting: FooService,
-        });
+      container.bind(FooService).bind(BarService).bind({
+        provide: AbstractService,
+        useExisting: FooService,
+      });
 
       expect(container.get(FooService)).toBeInstanceOf(FooService);
       expect(container.get(FooService)).toBeInstanceOf(AbstractService);
@@ -327,5 +324,61 @@ describe("Providers", () => {
     );
 
     expect(() => container.get(MY_TOKEN)).toThrowError("use injectAsync() or container.getAsync() instead");
+  });
+
+  it("should pass the container to the factory", () => {
+    const container = new Container();
+    const fooFactory = vi.fn(() => "Foo");
+    const barFactory = vi.fn(() => "Bar");
+
+    container.bindAll(
+      {
+        provide: "foo",
+        useFactory: fooFactory,
+      },
+      {
+        provide: "bar",
+        useFactory: barFactory,
+      },
+      {
+        provide: "message",
+        useFactory: (c) => {
+          return `${c.get("foo")} ${c.get("bar")}`;
+        },
+      },
+    );
+
+    expect(container.get('message')).toBe('Foo Bar');
+    expect(fooFactory).toHaveBeenCalledOnce();
+    expect(barFactory).toHaveBeenCalledOnce();
+  });
+
+  it("should auto-bind the container itself", () => {
+    const container = new Container();
+
+    const fooFactory = vi.fn(() => "Foo");
+    const barFactory = vi.fn(() => "Bar");
+
+    container.bindAll(
+      {
+        provide: "foo",
+        useFactory: fooFactory,
+      },
+      {
+        provide: "bar",
+        useFactory: barFactory,
+      },
+      {
+        provide: "message",
+        useFactory: () => {
+          const c = inject(Container);
+          return `${c.get("foo")} ${c.get("bar")}`;
+        },
+      },
+    );
+
+    expect(container.get('message')).toBe('Foo Bar');
+    expect(fooFactory).toHaveBeenCalledOnce();
+    expect(barFactory).toHaveBeenCalledOnce();
   });
 });
