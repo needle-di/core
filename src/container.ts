@@ -254,7 +254,7 @@ export class Container {
 
   private async doConstructAsync<T>(provider: Provider<T>, scope: Container): Promise<T[]> {
     if (isAsyncFactoryProvider(provider)) {
-      return [await provider.useFactory()];
+      return [await provider.useFactory(scope)];
     } else if (isExistingProvider(provider)) {
       return scope.getAsync(provider.useExisting, { multi: true });
     } else if (isClassProvider(provider) || isConstructorProvider(provider)) {
@@ -373,7 +373,7 @@ function doConstruct<T>(provider: Provider<T>, scope: Container): T[] {
   } else if (isValueProvider(provider)) {
     return [provider.useValue];
   } else if (isFactoryProvider(provider)) {
-    return [provider.useFactory()];
+    return [provider.useFactory(scope)];
   } else if (isAsyncFactoryProvider(provider)) {
     throw Error("Invalid state");
   } else {

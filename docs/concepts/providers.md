@@ -102,6 +102,16 @@ container.bind({
 });
 ```
 
+It is also possible to access the container, which is passed to the `useFactory` function:
+
+```typescript
+container.bind({
+  provide: MyService,
+  useFactory: (container) =>
+    new MyService(container.get(FooService), container.get(BarService)),
+});
+```
+
 ### Existing providers
 
 An existing provider is a special provider that refers to another provider, by specifying its token.
