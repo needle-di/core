@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.10.1](https://github.com/needle-di/core/compare/v0.10.0...v0.10.1) (2025-01-17)
+
+
+### Bug Fixes
+
+* fix incorrect type inference for injection tokens ([#58](https://github.com/needle-di/core/issues/58)) ([9edb073](https://github.com/needle-di/core/commit/9edb073a9186fd434180d0e7d189e4e786f7abe3))
+
 ## [0.10.0](https://github.com/needle-di/core/compare/v0.9.0...v0.10.0) (2025-01-16)
 
 
