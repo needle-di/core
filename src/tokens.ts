@@ -23,12 +23,12 @@ export class InjectionToken<T> {
 
 type InjectionTokenOptions<T> =
   | {
-      async?: false;
-      factory: () => T;
-    }
-  | {
       async: true;
       factory: () => Promise<T>;
+    }
+  | {
+      async?: false;
+      factory: () => T;
     };
 
 /**

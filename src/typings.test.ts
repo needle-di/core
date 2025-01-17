@@ -335,6 +335,12 @@ describe("Type-safety", () => {
     container.bind({ provide: STRING_INFERRED, useValue: "foo" });
     // @ts-expect-error
     container.bind({ provide: STRING_INFERRED, useValue: 3 });
+
+    // type inference for injection tokens with factories
+    const ASYNC_FACTORY = new InjectionToken("SOME_NUMBER_FACTORY", {
+      async: true,
+      factory: async () => 3,
+    });
   });
   describe("Injecting", () => {
     class FooService {
