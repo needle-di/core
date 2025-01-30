@@ -67,3 +67,8 @@ const barService = bootstrap(BarService);
 
 This is useful if you solely depend on [auto-binding](/concepts/binding#auto-binding) and/or [tree-shakeable injection tokens](/advanced/tree-shaking)
 and therefore don't need to register anything manually into your container.
+
+> [!WARNING]
+> Calling `bootstrap()` or `bootstrapAsync()` creates a new container everytime, leading to the creation
+> of new instances for your singleton services. Make sure to only call it once in the lifecycle of your
+> application to use it efficiently.
