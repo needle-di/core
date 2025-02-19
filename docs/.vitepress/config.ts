@@ -1,5 +1,5 @@
 import { defineConfig } from "vitepress";
-import { version } from "../../package.json";
+import packageJson from "../../package.json" with { type: "json" };
 import { JSR_ICON } from "./jsr.icon.js";
 
 // https://vitepress.dev/reference/site-config
@@ -26,13 +26,13 @@ export default defineConfig({
       { text: "Home", link: "/" },
       { text: "Documentation", link: "/concepts/binding" },
       {
-        text: `v${version}`,
+        text: `v${packageJson.version}`,
         items: [
           {
             items: [
               {
-                text: `v${version}`,
-                link: `https://github.com/needle-di/core/releases/tag/v${version}`,
+                text: `v${packageJson.version}`,
+                link: `https://github.com/needle-di/core/releases/tag/v${packageJson.version}`,
               },
               {
                 text: "Changelog",
@@ -90,7 +90,7 @@ export default defineConfig({
 
     footer: {
       message: "Released under the MIT License",
-      copyright: "Copyright © 2024 Dirk Luijk",
+      copyright: "Copyright © 2025",
     },
   },
 });

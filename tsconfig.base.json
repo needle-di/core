@@ -1,13 +1,15 @@
 {
-  "extends": "@tsconfig/node20",
   "compilerOptions": {
+    "lib": ["es2023"],
+    "module": "nodenext",
+    "target": "es2022",
+
     /* Reasonable default base options: */
 
     // No emitting by default.
     "noEmit": true,
 
     // Of course, this is common practice in Node but also part of ES standards.
-    // todo: is there a way to enforce "with type"?
     "resolveJsonModule": true,
 
     // ESM-first please, yes.
