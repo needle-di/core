@@ -70,6 +70,7 @@ export default defineConfig({
           { text: "Inheritance", link: "/advanced/inheritance" },
           { text: "Tree-shaking", link: "/advanced/tree-shaking" },
           { text: "Async injection", link: "/advanced/async-injection" },
+          { text: "Child containers", link: "/advanced/child-containers" },
         ],
       },
       {
@@ -77,9 +78,9 @@ export default defineConfig({
         link: "https://github.com/needle-di/core/blob/main/CHANGELOG.md",
       },
       {
-        text: 'StackBlitz demo',
-        link: 'https://stackblitz.com/edit/needle-di'
-      }
+        text: "StackBlitz demo",
+        link: "https://stackblitz.com/edit/needle-di",
+      },
     ],
 
     socialLinks: [
