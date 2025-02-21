@@ -239,6 +239,10 @@ export class Container {
     }
   }
 
+  public has<T>(token: Token<T>): boolean {
+    return this.providers.has(token);
+  }
+
   private construct<T>(provider: Provider<T>, scope: Container = this): T[] {
     const originalScope = currentScope;
     try {
