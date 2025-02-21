@@ -61,6 +61,33 @@ describe("Container API", () => {
     expect(await container.getAsync(aliasToken)).toBe("foo");
   });
 
+  it("has", async () => {
+    const container = new Container();
+    const token = new InjectionToken<MyService>("some-token");
+
+    expect(container.has(token)).toBe(false);
+
+    container.bind({ provide: token, useClass: MyService });
+    expect(container.has(token)).toBe(true);
+
+    // has shall not create a provider, even if it is async
+    const asyncToken = new InjectionToken<MyService>("some-async-token");
+    expect(container.has(asyncToken)).toBe(false);
+    const spy = vi.fn();
+    container.bind({
+      provide: asyncToken,
+      async: true,
+      useFactory: async () => {
+        spy();
+        return new MyService();
+      },
+    });
+    expect(container.has(asyncToken)).toBe(true);
+    expect(spy).toHaveBeenCalledTimes(0);
+    await container.getAsync(asyncToken);
+    expect(spy).toHaveBeenCalledTimes(1);
+  });
+
   it("bootstrap", () => {
     expect(bootstrap(MyService)).toBeInstanceOf(MyService);
     expect(bootstrap(MyService)).toBeInstanceOf(MyService);

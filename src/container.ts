@@ -274,6 +274,13 @@ export class Container {
     return new Container(this);
   }
 
+  /**
+   * Returns whether the container has one or more providers for this token.
+   */
+  public has<T>(token: Token<T>): boolean {
+    return this.providers.has(token);
+  }
+
   private construct<T>(provider: Provider<T>, scope: Container = this): T[] {
     const originalScope = currentScope;
     try {
