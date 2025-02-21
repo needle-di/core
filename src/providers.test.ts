@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { Container, inject } from './container.ts';
+import { Container, inject } from "./container.ts";
 import { InjectionToken } from "./tokens.ts";
 import { injectable } from "./decorators.ts";
 
@@ -348,7 +348,7 @@ describe("Providers", () => {
       },
     );
 
-    expect(container.get('message')).toBe('Foo Bar');
+    expect(container.get("message")).toBe("Foo Bar");
     expect(fooFactory).toHaveBeenCalledOnce();
     expect(barFactory).toHaveBeenCalledOnce();
   });
@@ -377,8 +377,92 @@ describe("Providers", () => {
       },
     );
 
-    expect(container.get('message')).toBe('Foo Bar');
+    expect(container.get("message")).toBe("Foo Bar");
     expect(fooFactory).toHaveBeenCalledOnce();
     expect(barFactory).toHaveBeenCalledOnce();
+  });
+
+  describe("Child containers", () => {
+    it("should be able to provide services provided on one of their ancestors", () => {
+      const parent = new Container();
+      const child = parent.createChild();
+      const grandChild = child.createChild();
+
+      parent.bind({ provide: "tokenA", useFactory: () => ["a"] });
+      child.bind({ provide: "tokenB", useFactory: () => ["b"] });
+      grandChild.bind({ provide: "tokenC", useFactory: () => ["c"] });
+
+      expect(grandChild.get("tokenA")).toEqual(["a"]);
+      expect(grandChild.get("tokenB")).toEqual(["b"]);
+      expect(grandChild.get("tokenC")).toEqual(["c"]);
+
+      expect(child.get("tokenA")).toEqual(["a"]);
+      expect(child.get("tokenB")).toEqual(["b"]);
+      expect(() => child.get("tokenC")).toThrowError("No provider(s) found for tokenC");
+
+      expect(parent.get("tokenA")).toEqual(["a"]);
+      expect(() => parent.get("tokenB")).toThrowError("No provider(s) found for tokenB");
+      expect(() => child.get("tokenC")).toThrowError("No provider(s) found for tokenC");
+    });
+
+    it("should reuse singletons from their parent", () => {
+      const parent = new Container();
+      const child = parent.createChild();
+      const grandChild = child.createChild();
+
+      parent.bind({ provide: "tokenA", useFactory: () => ["a"] });
+      child.bind({ provide: "tokenB", useFactory: () => ["b"] });
+
+      const a1 = parent.get("tokenA");
+      const a2 = grandChild.get("tokenA");
+      const a3 = child.get("tokenA");
+
+      const b1 = child.get("tokenB");
+      const b2 = grandChild.get("tokenB");
+
+      expect(a1).toBe(a2);
+      expect(a2).toBe(a3);
+
+      expect(b1).toBe(b2);
+    });
+
+    it("should not share their services with their parent", () => {
+      const parent = new Container();
+      const child = parent.createChild();
+
+      child.bind({ provide: "tokenA", useFactory: () => ["a"] });
+
+      expect(child.get("tokenA")).toEqual(["a"]);
+      expect(() => parent.get("tokenA")).toThrowError("No provider(s) found for tokenA");
+    });
+
+    it("should keep track of their own singletons if provider was overridden", () => {
+      const parent = new Container();
+      const child = parent.createChild();
+      const grandChild = child.createChild();
+
+      parent.bind({ provide: "tokenA", useFactory: () => ["a1"] });
+      child.bind({ provide: "tokenA", useFactory: () => ["a2"] });
+
+      expect(parent.get("tokenA")).toEqual(["a1"]);
+      expect(child.get("tokenA")).toEqual(["a2"]);
+      expect(grandChild.get("tokenA")).toEqual(["a2"]);
+    });
+
+    it("should not merge multi-providers with their parents", () => {
+      const parent = new Container();
+      const child = parent.createChild();
+
+      parent
+        .bind({ provide: "tokenA", useFactory: () => "a1", multi: true })
+        .bind({ provide: "tokenA", useFactory: () => "a2", multi: true });
+
+      child
+        .bind({ provide: "tokenA", useFactory: () => "a3", multi: true })
+        .bind({ provide: "tokenA", useFactory: () => "a4", multi: true });
+
+      expect(parent.get("tokenA", { multi: true })).toEqual(["a1", "a2"]);
+      expect(child.get("tokenA", { multi: true })).toEqual(["a3", "a4"]);
+    });
   });
 });
