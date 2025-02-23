@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.11.0](https://github.com/needle-di/core/compare/v0.10.1...v0.11.0) (2025-02-23)
+
+
+### Features
+
+* add support for child containers ([#64](https://github.com/needle-di/core/issues/64)) ([b1a1cbf](https://github.com/needle-di/core/commit/b1a1cbf69821b077458d2d8b184e3b2b644323a9))
+* **container:** add `container.has()` method ([#65](https://github.com/needle-di/core/issues/65)) ([5452b44](https://github.com/needle-di/core/commit/5452b44f505243204354d57673697017e20c500c))
+
 ## [0.10.1](https://github.com/needle-di/core/compare/v0.10.0...v0.10.1) (2025-01-17)
 
 
