@@ -20,13 +20,21 @@ export class Container {
   private readonly providers: ProviderMap = new Map();
   private readonly singletons: SingletonMap = new Map();
 
-  constructor() {
+  private readonly parent?: Container;
+
+  constructor(parent?: Container) {
+    this.parent = parent;
     this.bind({
       provide: Container,
       useValue: this,
     });
   }
 
+  /**
+   * Binds multiple providers to this container.
+   *
+   * {@link https://needle-di.io/concepts/binding.html#binding}
+   */
   public bindAll<A>(p1: Provider<A>): this;
   public bindAll<A, B>(p1: Provider<A>, p2: Provider<B>): this;
   public bindAll<A, B, C>(p1: Provider<A>, p2: Provider<B>, p3: Provider<C>): this;
@@ -95,6 +103,11 @@ export class Container {
     return this;
   }
 
+  /**
+   * Binds a provider to this container.
+   *
+   * {@link https://needle-di.io/concepts/binding.html#binding}
+   */
   public bind<T>(provider: Provider<T>): this {
     const token = isConstructorProvider(provider) ? provider : provider.provide;
     const multi = isMultiProvider(provider);
@@ -152,6 +165,11 @@ export class Container {
     return this;
   }
 
+  /**
+   * Retrieves a service from this container.
+   *
+   * {@link https://needle-di.io/concepts/containers.html}
+   */
   public get<T>(token: Token<T>, options: { multi: true }): T[];
   public get<T>(token: Token<T>, options: { optional: true }): T | undefined;
   public get<T>(token: Token<T>, options: { multi: true; optional: true }): T[] | undefined;
@@ -163,6 +181,9 @@ export class Container {
     const multi = options?.multi ?? false;
 
     if (!this.providers.has(token)) {
+      if (this.parent) {
+        return this.parent.get(token, options);
+      }
       if (optional) {
         return undefined;
       }
@@ -196,6 +217,11 @@ export class Container {
     }
   }
 
+  /**
+   * Retrieves a service from this container asynchronously.
+   *
+   * {@link https://needle-di.io/advanced/async-injection.html}
+   */
   public async getAsync<T>(token: Token<T>, options: { multi: true }): Promise<T[]>;
   public async getAsync<T>(token: Token<T>, options: { optional: true }): Promise<T | undefined>;
   public async getAsync<T>(token: Token<T>, options: { multi: true; optional: true }): Promise<T[] | undefined>;
@@ -239,6 +265,18 @@ export class Container {
     }
   }
 
+  /**
+   * Creates a child container.
+   *
+   * {@link https://needle-di.io/advanced/child-containers.html}
+   */
+  public createChild(): Container {
+    return new Container(this);
+  }
+
+  /**
+   * Returns whether the container has one or more providers for this token.
+   */
   public has<T>(token: Token<T>): boolean {
     return this.providers.has(token);
   }
