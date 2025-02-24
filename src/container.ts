@@ -4,7 +4,7 @@ import type { Provider } from "./providers.ts";
 import { getInjectableTargets, isInjectable } from "./decorators.ts";
 import { assertPresent, assertSingle, getParentClasses, windowedSlice } from "./utils.ts";
 import { Factory } from "./factory.ts";
-import { currentContext, injectionContext } from "./context.ts";
+import { injectionContext } from "./context.ts";
 
 /**
  * A dependency injection (DI) container will keep track of all bindings
@@ -324,53 +324,6 @@ export class Container {
     return (this.providers.get(token) ?? []).some(
       (it) => Guards.isExistingProvider(it) && it.provide === token && it.useExisting === existingToken,
     );
-  }
-}
-
-/**
- * Injects a service within the current injection context, using the token provided.
- */
-export function inject<T>(token: Token<T>, options: { multi: true }): T[];
-export function inject<T>(token: Token<T>, options: { optional: true }): T | undefined;
-export function inject<T>(token: Token<T>, options: { multi: true; optional: true }): T[] | undefined;
-export function inject<T>(token: Token<T>, options?: { optional?: boolean; multi?: boolean }): T;
-export function inject<T>(token: Token<T>, options?: { optional?: boolean; multi?: boolean }): T | T[] | undefined {
-  try {
-    return currentContext().run((container) => container.get(token, options));
-  } catch (error) {
-    if (options?.optional === true) {
-      return undefined;
-    }
-
-    throw error;
-  }
-}
-
-/**
- * Injects a service asynchronously within the current injection context, using the token provided.
- */
-export async function injectAsync<T>(token: Token<T>, options: { multi: true }): Promise<T[]>;
-export async function injectAsync<T>(token: Token<T>, options: { optional: true }): Promise<T | undefined>;
-export async function injectAsync<T>(
-  token: Token<T>,
-  options: { multi: true; optional: true },
-): Promise<T[] | undefined>;
-export async function injectAsync<T>(token: Token<T>, options?: { optional?: boolean; multi?: boolean }): Promise<T>;
-export async function injectAsync<T>(
-  token: Token<T>,
-  options?: {
-    optional?: boolean;
-    multi?: boolean;
-  },
-): Promise<T | T[] | undefined> {
-  try {
-    return currentContext().runAsync((container) => container.getAsync(token, options));
-  } catch (error) {
-    if (options?.optional === true) {
-      return undefined;
-    }
-
-    throw error;
   }
 }
 

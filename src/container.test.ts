@@ -1,7 +1,8 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { bootstrap, bootstrapAsync, Container, inject, injectAsync } from "./container.ts";
+import { bootstrap, bootstrapAsync, Container } from "./container.ts";
 import { injectable } from "./decorators.ts";
 import { InjectionToken } from "./tokens.ts";
+import { inject, injectAsync } from "./context.js";
 
 const myServiceConstructorSpy = vi.fn();
 
@@ -18,7 +19,9 @@ describe("Container API", () => {
   });
 
   it("inject", () => {
-    expect(() => inject(MyService)).toThrowError("You can only invoke inject() from the injection context");
+    expect(() => inject(MyService)).toThrowError(
+      "You can only invoke inject() or injectAsync() within an injection context",
+    );
 
     const container = new Container();
     const token = new InjectionToken<MyService>("some-token");
@@ -34,7 +37,9 @@ describe("Container API", () => {
   });
 
   it("injectAsync", async () => {
-    expect(injectAsync(MyService)).rejects.toThrowError("You can only invoke injectAsync() from the injection context");
+    expect(injectAsync(MyService)).rejects.toThrowError(
+      "You can only invoke inject() or injectAsync() within an injection context",
+    );
 
     const container = new Container();
     const token = new InjectionToken<string>("some-token");

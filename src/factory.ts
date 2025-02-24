@@ -2,7 +2,7 @@ import { type Provider, type SyncProvider } from "./providers.ts";
 import { type Token, toString } from "./tokens.ts";
 import * as Guards from "./providers.ts";
 import { assertNever, retryOn } from "./utils.ts";
-import { Container, injectAsync } from "./container.ts";
+import { Container } from "./container.ts";
 
 /**
  * @internal
@@ -33,7 +33,7 @@ export class Factory {
         AsyncProvidersInSyncInjectionContextError,
         async () => create(),
         async (error) => {
-          await injectAsync(error.token, { multi: true, optional: true });
+          await this.container.getAsync(error.token, { multi: true, optional: true });
         },
       );
     }
