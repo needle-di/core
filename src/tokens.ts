@@ -1,4 +1,6 @@
 import { type AbstractClass, type Class, isClassLike } from "./utils.ts";
+import { type Provider } from "./providers.js";
+import * as Guards from "./providers.js";
 
 /**
  * A token is a reference to a service in the dependency injection (DI) container.
@@ -33,6 +35,7 @@ type InjectionTokenOptions<T> =
 
 /**
  * Type-guard to check if a token is a class reference.
+ *
  * @internal
  */
 export function isClassToken<T>(token: Token<T>): token is Class<T> {
@@ -41,6 +44,7 @@ export function isClassToken<T>(token: Token<T>): token is Class<T> {
 
 /**
  * Type-guard to check if a token is an InjectionToken
+ *
  * @internal
  */
 export function isInjectionToken<T>(token: Token<T>): token is InjectionToken<T> {
@@ -49,6 +53,7 @@ export function isInjectionToken<T>(token: Token<T>): token is InjectionToken<T>
 
 /**
  * Describes a token, useful for error messages.
+ *
  * @internal
  */
 export function toString<T>(token: Token<T>): string {
@@ -61,4 +66,13 @@ export function toString<T>(token: Token<T>): string {
   } else {
     return token;
   }
+}
+
+/**
+ * Returns the token for a provider.
+ *
+ * @internal
+ */
+export function getToken<T>(provider: Provider<T>): Token<T> {
+  return Guards.isConstructorProvider(provider) ? provider : provider.provide;
 }

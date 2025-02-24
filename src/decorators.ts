@@ -1,12 +1,5 @@
 import { type AbstractClass, type Class, getParentClasses } from "./utils.ts";
 
-// eslint-disable-next-line @typescript-eslint/no-invalid-void-type
-type ClassDecorator<C extends Class<unknown>> = (target: C) => C | void;
-
-export const injectableSymbol = Symbol("injectable");
-
-export type InjectableClass<T = unknown> = (Class<T> | AbstractClass<T>) & { [injectableSymbol]: Class<unknown>[] };
-
 /**
  * The @injectable() decorator allows you to automatically bind a class as singleton service
  * when requesting it from a DI container.
@@ -32,6 +25,13 @@ export function injectable<C extends Class<unknown>>(): ClassDecorator<C> {
     });
   };
 }
+
+export type InjectableClass<T = unknown> = (Class<T> | AbstractClass<T>) & { [injectableSymbol]: Class<unknown>[] };
+
+export const injectableSymbol = Symbol("injectable");
+
+// eslint-disable-next-line @typescript-eslint/no-invalid-void-type
+type ClassDecorator<C extends Class<unknown>> = (target: C) => C | void;
 
 export function isInjectable<T>(target: AbstractClass<T>): target is InjectableClass<T> {
   // eslint-disable-next-line no-prototype-builtins
