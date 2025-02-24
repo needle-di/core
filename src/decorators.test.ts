@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+
 import { getInjectableTargets, injectable, type InjectableClass } from "./decorators.ts";
 
 // eslint-disable-next-line @typescript-eslint/no-extraneous-class

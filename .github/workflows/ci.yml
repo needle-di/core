@@ -79,7 +79,7 @@ jobs:
           key: deno_dir
 
       - name: 'deno check'
-        run: deno check **/*.ts
+        run: deno check src/**/*.ts
 
       - name: 'deno lint'
         run: deno run lint

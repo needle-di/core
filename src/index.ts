@@ -1,5 +1,5 @@
 export { Container, bootstrap, bootstrapAsync } from "./container.ts";
-export { inject, injectAsync } from "./context.js";
+export { inject, injectAsync } from "./context.ts";
 export { injectable } from "./decorators.ts";
 export type {
   Provider,

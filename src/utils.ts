@@ -44,6 +44,8 @@ export function assertPresent<T>(value: T | null | undefined): T {
 }
 
 /**
+ * Creates slices of an array.
+ *
  * @internal
  */
 export function windowedSlice<T>(array: T[], step?: 2): [T, T][];
@@ -60,6 +62,8 @@ export function windowedSlice<T>(array: T[], step = 2): T[][] {
 /**
  * Retries as long as it encounters any error that is instance of `errorClass`.
  * Awaits the result of the `onError` callback before retrying.
+ *
+ * @internal
  */
 export async function retryOn<TError, TReturn>(
   errorClass: Class<TError>,
@@ -80,6 +84,8 @@ export async function retryOn<TError, TReturn>(
 
 /**
  * Assert that there is a single element in an array. Throws the error from error provider if not.
+ *
+ * @internal
  */
 export function assertSingle<T>(array: T[], errorProvider: () => unknown): T {
   if (array.length > 1) {

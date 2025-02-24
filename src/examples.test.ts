@@ -1,8 +1,9 @@
+import { describe, expect, it, vi, vitest } from "vitest";
+
 import { injectable } from "./decorators.ts";
 import { bootstrap, bootstrapAsync, Container } from "./container.ts";
-import { describe, expect, it, vi, vitest } from "vitest";
 import { InjectionToken } from "./tokens.ts";
-import { inject, injectAsync } from "./context.js";
+import { inject, injectAsync } from "./context.ts";
 
 @injectable()
 class OtherService {
