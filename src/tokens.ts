@@ -1,6 +1,6 @@
 import { type AbstractClass, type Class, isClassLike } from "./utils.ts";
-import { type Provider } from "./providers.js";
-import * as Guards from "./providers.js";
+import { type Provider } from "./providers.ts";
+import * as Guards from "./providers.ts";
 
 /**
  * A token is a reference to a service in the dependency injection (DI) container.

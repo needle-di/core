@@ -3,8 +3,8 @@ import * as Guards from "./providers.ts";
 import type { Provider } from "./providers.ts";
 import { getInjectableTargets, isInjectable } from "./decorators.ts";
 import { assertPresent, assertSingle, getParentClasses, windowedSlice } from "./utils.ts";
-import { Factory } from "./factory.js";
-import { currentContext, injectionContext } from "./context.js";
+import { Factory } from "./factory.ts";
+import { currentContext, injectionContext } from "./context.ts";
 
 /**
  * A dependency injection (DI) container will keep track of all bindings
@@ -15,11 +15,11 @@ export class Container {
   private readonly singletons: SingletonMap = new Map();
 
   private readonly parent?: Container;
-  private readonly serviceFactory: Factory;
+  private readonly factory: Factory;
 
   constructor(parent?: Container) {
     this.parent = parent;
-    this.serviceFactory = new Factory(this);
+    this.factory = new Factory(this);
     this.bind({
       provide: Container,
       useValue: this,
@@ -195,7 +195,7 @@ export class Container {
 
     if (!this.singletons.has(token)) {
       injectionContext(this).run(() => {
-        const values = providers.flatMap((provider) => this.serviceFactory.construct(provider, token));
+        const values = providers.flatMap((provider) => this.factory.construct(provider, token));
         this.singletons.set(token, values);
       });
     }
@@ -246,7 +246,7 @@ export class Container {
 
     if (!this.singletons.has(token)) {
       await injectionContext(this).runAsync(async () => {
-        const values = await Promise.all(providers.map((it) => this.serviceFactory.constructAsync(it)));
+        const values = await Promise.all(providers.map((it) => this.factory.constructAsync(it)));
 
         this.singletons.set(token, values.flat());
       });

@@ -1,8 +1,8 @@
-import { type Provider, type SyncProvider } from "./providers.js";
-import { type Token, toString } from "./tokens.js";
-import * as Guards from "./providers.js";
-import { assertNever, retryOn } from "./utils.js";
-import { Container, injectAsync } from "./container.js";
+import { type Provider, type SyncProvider } from "./providers.ts";
+import { type Token, toString } from "./tokens.ts";
+import * as Guards from "./providers.ts";
+import { assertNever, retryOn } from "./utils.ts";
+import { Container, injectAsync } from "./container.ts";
 
 /**
  * @internal

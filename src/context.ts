@@ -1,4 +1,4 @@
-import { Container } from "./container.js";
+import { Container } from "./container.ts";
 
 export interface Context {
   run<T>(block: (container: Container) => T): T;
