@@ -1,4 +1,5 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
+
 import { injectable } from "./decorators.ts";
 import { Container } from "./container.ts";
 import { InjectionToken } from "./tokens.ts";

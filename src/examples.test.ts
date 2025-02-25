@@ -1,7 +1,9 @@
-import { injectable } from "./decorators.ts";
-import { bootstrap, bootstrapAsync, Container, inject, injectAsync } from "./container.ts";
 import { describe, expect, it, vi, vitest } from "vitest";
+
+import { injectable } from "./decorators.ts";
+import { bootstrap, bootstrapAsync, Container } from "./container.ts";
 import { InjectionToken } from "./tokens.ts";
+import { inject, injectAsync } from "./context.ts";
 
 @injectable()
 class OtherService {
@@ -100,7 +102,9 @@ describe("Container", () => {
     const container = new Container();
     const service = container.get(MyService);
 
-    expect(() => service.triggerInject()).toThrowError("You can only invoke inject() from the injection context");
+    expect(() => service.triggerInject()).toThrowError(
+      "You can only invoke inject() or injectAsync() within an injection context",
+    );
   });
 
   it("should support all kinds of providers", async () => {
@@ -574,9 +578,7 @@ describe("Container", () => {
 
     expect(() =>
       container.bindAll({ provide: "otherKey", multi: true, useValue: 2 }, { provide: "otherKey", useValue: 1 }),
-    ).toThrowError(
-      "Cannot bind otherKey as provider, since there are already provider(s) that are multi-providers.",
-    );
+    ).toThrowError("Cannot bind otherKey as provider, since there are already provider(s) that are multi-providers.");
   });
 
   it("existing provider may not refer to itself", () => {
@@ -597,9 +599,7 @@ describe("Container", () => {
       { provide: "asyncKey", multi: true, async: true, useFactory: async () => 2 },
     );
 
-    expect(() =>
-      container.get('key'),
-    ).toThrowError(
+    expect(() => container.get("key")).toThrowError(
       "Requesting a single value for key, but multiple values were provided.",
     );
 

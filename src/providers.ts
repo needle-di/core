@@ -1,17 +1,31 @@
 import type { Token } from "./tokens.ts";
 import { type Class, isClassLike } from "./utils.ts";
-import type { Container } from './container.ts';
+import type { Container } from "./container.ts";
 
 /**
  * A provider states how, for a given token, a service should be constructed.
  */
-export type Provider<T> =
+export type Provider<T> = SyncProvider<T> | AsyncProvider<T>;
+
+/**
+ * A provider that provides synchronously, allowing a non-blocking process.
+ */
+export type SyncProvider<T> =
   | ConstructorProvider<T>
   | ClassProvider<T>
   | ValueProvider<T>
-  | FactoryProvider<T>
-  | AsyncFactoryProvider<T>
+  | SyncFactoryProvider<T>
   | ExistingProvider<T>;
+
+/**
+ * A provider that provides asynchronously, enforcing an awaitable process.
+ */
+export type AsyncProvider<T> = AsyncFactoryProvider<T>;
+
+/**
+ * A factory provider refers to a value which is lazily returned.
+ */
+export type FactoryProvider<T> = SyncFactoryProvider<T> | AsyncFactoryProvider<T>;
 
 /**
  * A constructor provider refers to a class constructor,
@@ -30,7 +44,7 @@ export interface ClassProvider<T> {
 }
 
 /**
- * A value provider refers to a static value.
+ * Provides a static value.
  */
 export interface ValueProvider<T> {
   provide: Token<T>;
@@ -39,10 +53,9 @@ export interface ValueProvider<T> {
 }
 
 /**
- * A factory provider refers to a value which is lazily returned
- * by a synchronous factory function.
+ * Provides a value which is lazily returned by a synchronous factory function.
  */
-export interface FactoryProvider<T> {
+export interface SyncFactoryProvider<T> {
   provide: Token<T>;
   async?: false;
   multi?: true;
@@ -50,8 +63,7 @@ export interface FactoryProvider<T> {
 }
 
 /**
- * An async factory provider refers to a value which is lazily returned
- * by an asynchronous factory function.
+ * Provides a value which is lazily returned by an asynchronous factory function.
  */
 export interface AsyncFactoryProvider<T> {
   provide: Token<T>;
@@ -61,7 +73,7 @@ export interface AsyncFactoryProvider<T> {
 }
 
 /**
- * An existing provider refers to a value provided by another provider.
+ * Provides a value that is provided by another provider.
  */
 export interface ExistingProvider<T> {
   provide: Token<T>;
@@ -82,11 +94,11 @@ export function isValueProvider<T>(provider: Provider<T>): provider is ValueProv
 }
 
 export function isFactoryProvider<T>(provider: Provider<T>): provider is FactoryProvider<T> {
-  return "provide" in provider && "useFactory" in provider && !provider.async;
+  return "provide" in provider && "useFactory" in provider;
 }
 
-export function isAsyncFactoryProvider<T>(provider: Provider<T>): provider is AsyncFactoryProvider<T> {
-  return "provide" in provider && "useFactory" in provider && provider.async === true;
+export function isAsyncProvider<T>(provider: Provider<T>): provider is AsyncProvider<T> {
+  return isFactoryProvider(provider) && provider.async === true;
 }
 
 export function isExistingProvider<T>(provider: Provider<T>): provider is ExistingProvider<T> {

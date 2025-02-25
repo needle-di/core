@@ -1,13 +1,17 @@
-export { inject, Container, bootstrap, bootstrapAsync, injectAsync } from "./container.ts";
+export { Container, bootstrap, bootstrapAsync } from "./container.ts";
+export { inject, injectAsync } from "./context.ts";
 export { injectable } from "./decorators.ts";
 export type {
-  FactoryProvider,
-  ExistingProvider,
   Provider,
+  SyncProvider,
+  AsyncProvider,
+  ExistingProvider,
   ConstructorProvider,
   ClassProvider,
   ValueProvider,
+  FactoryProvider,
   AsyncFactoryProvider,
+  SyncFactoryProvider,
 } from "./providers.ts";
 export { InjectionToken } from "./tokens.ts";
 export type { Token } from "./tokens.ts";

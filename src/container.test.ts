@@ -1,7 +1,9 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { bootstrap, bootstrapAsync, Container, inject, injectAsync } from "./container.ts";
+
+import { bootstrap, bootstrapAsync, Container } from "./container.ts";
 import { injectable } from "./decorators.ts";
 import { InjectionToken } from "./tokens.ts";
+import { inject, injectAsync } from "./context.ts";
 
 const myServiceConstructorSpy = vi.fn();
 
@@ -18,7 +20,9 @@ describe("Container API", () => {
   });
 
   it("inject", () => {
-    expect(() => inject(MyService)).toThrowError("You can only invoke inject() from the injection context");
+    expect(() => inject(MyService)).toThrowError(
+      "You can only invoke inject() or injectAsync() within an injection context",
+    );
 
     const container = new Container();
     const token = new InjectionToken<MyService>("some-token");
@@ -34,7 +38,9 @@ describe("Container API", () => {
   });
 
   it("injectAsync", async () => {
-    expect(injectAsync(MyService)).rejects.toThrowError("You can only invoke injectAsync() from the injection context");
+    expect(injectAsync(MyService)).rejects.toThrowError(
+      "You can only invoke inject() or injectAsync() within an injection context",
+    );
 
     const container = new Container();
     const token = new InjectionToken<string>("some-token");
@@ -100,5 +106,23 @@ describe("Container API", () => {
     expect(await bootstrapAsync(MyService)).toBeInstanceOf(MyService);
 
     expect(myServiceConstructorSpy).toHaveBeenCalledTimes(2);
+  });
+
+  describe("contexts", () => {
+    it("should support nesting without interference", () => {
+      const container1 = new Container().bind({ provide: "a", useFactory: () => "A" });
+      const container2 = new Container().bind({ provide: "b", useFactory: () => container1.get("a") });
+
+      const container3 = new Container()
+        .bind({ provide: "c", useFactory: () => container2.get("b") })
+        .bind({ provide: "d", useFactory: () => inject("c") })
+        .bind({ provide: "e", useFactory: () => inject("b") });
+
+      expect(container3.get("c")).toEqual("A");
+      expect(container3.get("d")).toEqual("A");
+
+      expect(() => container3.get("e")).toThrowError("No provider(s) found for b");
+      expect(() => container3.get("b")).toThrowError("No provider(s) found for b");
+    });
   });
 });

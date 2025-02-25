@@ -2,6 +2,7 @@
 // noinspection JSUnusedLocalSymbols
 
 import { describe, it } from "vitest";
+
 import type {
   AsyncFactoryProvider,
   ClassProvider,
@@ -11,7 +12,8 @@ import type {
   ValueProvider,
 } from "./providers.ts";
 import { InjectionToken } from "./tokens.ts";
-import { Container, inject, injectAsync } from "./container.ts";
+import { Container } from "./container.ts";
+import { inject, injectAsync } from "./context.ts";
 
 describe("Type-safety", () => {
   describe("Providers API", () => {

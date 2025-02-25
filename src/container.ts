@@ -1,16 +1,10 @@
-import { type Token, isClassToken, toString, isInjectionToken } from "./tokens.ts";
-import {
-  isClassProvider,
-  isFactoryProvider,
-  isConstructorProvider,
-  isValueProvider,
-  type Provider,
-  isAsyncFactoryProvider,
-  isMultiProvider,
-  isExistingProvider,
-} from "./providers.ts";
+import { type Token, isClassToken, toString, isInjectionToken, getToken } from "./tokens.ts";
+import * as Guards from "./providers.ts";
+import type { Provider } from "./providers.ts";
 import { getInjectableTargets, isInjectable } from "./decorators.ts";
-import { assertPresent, getParentClasses, windowedSlice } from "./utils.ts";
+import { assertPresent, assertSingle, getParentClasses, windowedSlice } from "./utils.ts";
+import { Factory } from "./factory.ts";
+import { injectionContext } from "./context.ts";
 
 /**
  * A dependency injection (DI) container will keep track of all bindings
@@ -21,9 +15,11 @@ export class Container {
   private readonly singletons: SingletonMap = new Map();
 
   private readonly parent?: Container;
+  private readonly factory: Factory;
 
   constructor(parent?: Container) {
     this.parent = parent;
+    this.factory = new Factory(this);
     this.bind({
       provide: Container,
       useValue: this,
@@ -54,6 +50,7 @@ export class Container {
     p5: Provider<E>,
     p6: Provider<F>,
   ): this;
+  // noinspection JSUnusedGlobalSymbols
   public bindAll<A, B, C, D, E, F, G>(
     p1: Provider<A>,
     p2: Provider<B>,
@@ -73,6 +70,7 @@ export class Container {
     p7: Provider<G>,
     p8: Provider<H>,
   ): this;
+  // noinspection JSUnusedGlobalSymbols
   public bindAll<A, B, C, D, E, F, G, H, I>(
     p1: Provider<A>,
     p2: Provider<B>,
@@ -109,46 +107,50 @@ export class Container {
    * {@link https://needle-di.io/concepts/binding.html#binding}
    */
   public bind<T>(provider: Provider<T>): this {
-    const token = isConstructorProvider(provider) ? provider : provider.provide;
-    const multi = isMultiProvider(provider);
+    const token = getToken(provider);
 
-    if (isExistingProvider(provider) && provider.provide === provider.useExisting) {
+    // running some validations...
+    if (Guards.isExistingProvider(provider) && provider.provide === provider.useExisting) {
       throw Error(`The provider for token ${toString(token)} with "useExisting" cannot refer to itself.`);
     }
 
-    if (!isExistingProvider(provider) && this.singletons.has(token)) {
+    if (!Guards.isExistingProvider(provider) && this.singletons.has(token)) {
       throw Error(
         `Cannot bind a new provider for ${toString(token)}, since the existing provider was already constructed.`,
       );
     }
 
-    const existingProviders = this.providers.get(token) ?? [];
-
-    // ignore this provider if it was already provided as existingProvider
+    // ignore the new provider if it was already provided
     if (
-      isExistingProvider(provider) &&
-      isMultiProvider(provider) &&
+      Guards.isExistingProvider(provider) &&
+      Guards.isMultiProvider(provider) &&
       this.existingProviderAlreadyProvided(token, provider.useExisting)
     ) {
       return this;
     }
 
-    if (multi && existingProviders.some((it) => !isMultiProvider(it))) {
+    const providers = this.providers.get(token) ?? [];
+
+    // validating multi-provider inconsistencies...
+    const multi = Guards.isMultiProvider(provider);
+
+    if (multi && providers.some((it) => !Guards.isMultiProvider(it))) {
       throw Error(
         `Cannot bind ${toString(token)} as multi-provider, since there is already a provider which is not a multi-provider.`,
       );
-    } else if (!multi && existingProviders.some((it) => isMultiProvider(it))) {
-      if (!existingProviders.every(isExistingProvider)) {
+    } else if (!multi && providers.some((it) => Guards.isMultiProvider(it))) {
+      if (!providers.every(Guards.isExistingProvider)) {
         throw Error(
           `Cannot bind ${toString(token)} as provider, since there are already provider(s) that are multi-providers.`,
         );
       }
     }
 
-    this.providers.set(token, multi ? [...existingProviders, provider] : [provider]);
+    // appending or replacing providers...
+    this.providers.set(token, multi ? [...providers, provider] : [provider]);
 
     // inheritance support: also bind parent classes to their immediate child classes
-    if (isClassToken(token) && (isClassProvider(provider) || isConstructorProvider(provider))) {
+    if (isClassToken(token) && (Guards.isClassProvider(provider) || Guards.isConstructorProvider(provider))) {
       windowedSlice([token, ...getParentClasses(token)]).forEach(([childClass, parentClass]) => {
         const parentProvider: Provider<typeof childClass> = {
           provide: parentClass,
@@ -178,7 +180,6 @@ export class Container {
     this.autoBindIfNeeded(token);
 
     const optional = options?.optional ?? false;
-    const multi = options?.multi ?? false;
 
     if (!this.providers.has(token)) {
       if (this.parent) {
@@ -193,27 +194,24 @@ export class Container {
     const providers = assertPresent(this.providers.get(token));
 
     if (!this.singletons.has(token)) {
-      if (providers.some(isAsyncFactoryProvider)) {
-        throw new AsyncProvidersInSyncInjectionContextError(token);
-      }
-
-      this.singletons.set(
-        token,
-        providers.flatMap((it) => this.construct(it)),
-      );
+      injectionContext(this).run(() => {
+        const values = providers.flatMap((provider) => this.factory.construct(provider, token));
+        this.singletons.set(token, values);
+      });
     }
 
     const singletons = assertPresent(this.singletons.get(token));
+    const multi = options?.multi ?? false;
 
     if (multi) {
       return singletons;
-    } else if (singletons.length > 1) {
-      throw Error(
-        `Requesting a single value for ${toString(token)}, but multiple values were provided. ` +
-          `Consider passing "{ multi: true }" to inject all values, or adjust your bindings accordingly.`,
-      );
     } else {
-      return assertPresent(singletons.at(0));
+      return assertSingle(singletons, () =>
+        Error(
+          `Requesting a single value for ${toString(token)}, but multiple values were provided. ` +
+            `Consider passing "{ multi: true }" to inject all values, or adjust your bindings accordingly.`,
+        ),
+      );
     }
   }
 
@@ -236,7 +234,6 @@ export class Container {
     this.autoBindIfNeeded(token);
 
     const optional = options?.optional ?? false;
-    const multi = options?.multi ?? false;
 
     if (!this.providers.has(token)) {
       if (optional) {
@@ -245,23 +242,30 @@ export class Container {
       throw Error(`No provider(s) found for ${toString(token)}`);
     }
 
-    const existingProviders = this.providers.get(token) ?? [];
+    const providers = assertPresent(this.providers.get(token));
 
     if (!this.singletons.has(token)) {
-      const values = await Promise.all(existingProviders.map((it) => this.constructAsync(it)));
-      this.singletons.set(token, values.flat());
+      await injectionContext(this).runAsync(async () => {
+        const values = await Promise.all(providers.map((it) => this.factory.constructAsync(it)));
+
+        this.singletons.set(token, values.flat());
+      });
     }
 
     const singletons = assertPresent(this.singletons.get(token));
+    const multi = options?.multi ?? false;
+
     if (multi) {
-      return Promise.all(singletons.map(promisify));
-    } else if (singletons.length > 1) {
-      throw Error(
-        `Requesting a single value for ${toString(token)}, but multiple values were provided. ` +
-          `Consider passing "{ multi: true }" to inject all values, or adjust your bindings accordingly.`,
-      );
+      return singletons;
     } else {
-      return promisify(singletons.at(0));
+      return assertSingle(
+        singletons,
+        () =>
+          new Error(
+            `Requesting a single value for ${toString(token)}, but multiple values were provided. ` +
+              `Consider passing "{ multi: true }" to inject all values, or adjust your bindings accordingly.`,
+          ),
+      );
     }
   }
 
@@ -279,51 +283,6 @@ export class Container {
    */
   public has<T>(token: Token<T>): boolean {
     return this.providers.has(token);
-  }
-
-  private construct<T>(provider: Provider<T>, scope: Container = this): T[] {
-    const originalScope = currentScope;
-    try {
-      currentScope = scope;
-      return doConstruct(provider, scope);
-    } finally {
-      currentScope = originalScope;
-    }
-  }
-
-  private async constructAsync<T>(provider: Provider<T>, scope: Container = this): Promise<T[]> {
-    const originalScope = currentScope;
-    try {
-      currentScope = scope;
-      return await this.doConstructAsync(provider, scope);
-    } finally {
-      currentScope = originalScope;
-    }
-  }
-
-  private async doConstructAsync<T>(provider: Provider<T>, scope: Container): Promise<T[]> {
-    if (isAsyncFactoryProvider(provider)) {
-      return [await provider.useFactory(scope)];
-    } else if (isExistingProvider(provider)) {
-      return scope.getAsync(provider.useExisting, { multi: true });
-    } else if (isClassProvider(provider) || isConstructorProvider(provider)) {
-      while (true) {
-        try {
-          return doConstruct(provider, scope);
-        } catch (error) {
-          if (error instanceof AsyncProvidersInSyncInjectionContextError) {
-            const values = await injectAsync(error.token, { multi: true, optional: true });
-            if (values) {
-              this.singletons.set(error.token, values);
-            }
-          } else {
-            throw error;
-          }
-        }
-      }
-    } else {
-      return doConstruct(provider, scope);
-    }
   }
 
   private autoBindIfNeeded<T>(token: Token<T>) {
@@ -363,70 +322,8 @@ export class Container {
 
   private existingProviderAlreadyProvided(token: Token<unknown>, existingToken: Token<unknown>) {
     return (this.providers.get(token) ?? []).some(
-      (it) => isExistingProvider(it) && it.provide === token && it.useExisting === existingToken,
+      (it) => Guards.isExistingProvider(it) && it.provide === token && it.useExisting === existingToken,
     );
-  }
-}
-
-let currentScope: Container | undefined = undefined;
-
-/**
- * Injects a service within the current injection context, using the token provided.
- */
-export function inject<T>(token: Token<T>, options: { multi: true }): T[];
-export function inject<T>(token: Token<T>, options: { optional: true }): T | undefined;
-export function inject<T>(token: Token<T>, options: { multi: true; optional: true }): T[] | undefined;
-export function inject<T>(token: Token<T>, options?: { optional?: boolean; multi?: boolean }): T;
-export function inject<T>(token: Token<T>, options?: { optional?: boolean; multi?: boolean }): T | T[] | undefined {
-  if (currentScope === undefined) {
-    if (options?.optional) return undefined;
-    throw new Error("You can only invoke inject() from the injection context");
-  }
-  return currentScope.get(token, options);
-}
-
-/**
- * Injects a service asynchronously within the current injection context, using the token provided.
- */
-export async function injectAsync<T>(token: Token<T>, options: { multi: true }): Promise<T[]>;
-export async function injectAsync<T>(token: Token<T>, options: { optional: true }): Promise<T | undefined>;
-export async function injectAsync<T>(
-  token: Token<T>,
-  options: { multi: true; optional: true },
-): Promise<T[] | undefined>;
-export async function injectAsync<T>(token: Token<T>, options?: { optional?: boolean; multi?: boolean }): Promise<T>;
-export async function injectAsync<T>(
-  token: Token<T>,
-  options?: {
-    optional?: boolean;
-    multi?: boolean;
-  },
-): Promise<T | T[] | undefined> {
-  if (currentScope === undefined) {
-    if (options?.optional) return undefined;
-    throw new Error("You can only invoke injectAsync() from the injection context");
-  }
-  return currentScope.getAsync(token, options);
-}
-
-// see: https://github.com/tc39/proposal-promise-try
-async function promisify<T>(value: T | Promise<T>): Promise<T> {
-  return new Promise<T>((resolve) => resolve(value));
-}
-
-function doConstruct<T>(provider: Provider<T>, scope: Container): T[] {
-  if (isConstructorProvider(provider)) {
-    return [new provider()];
-  } else if (isClassProvider(provider)) {
-    return [new provider.useClass()];
-  } else if (isValueProvider(provider)) {
-    return [provider.useValue];
-  } else if (isFactoryProvider(provider)) {
-    return [provider.useFactory(scope)];
-  } else if (isAsyncFactoryProvider(provider)) {
-    throw Error("Invalid state");
-  } else {
-    return scope.get(provider.useExisting, { multi: true });
   }
 }
 
@@ -454,17 +351,4 @@ export function bootstrap<T>(token: Token<T>): T {
  */
 export function bootstrapAsync<T>(token: Token<T>): Promise<T> {
   return new Container().getAsync(token);
-}
-
-/**
- * An error that occurs when an async provider is requested in a synchronous context.
- *
- * @internal
- */
-class AsyncProvidersInSyncInjectionContextError<T> extends Error {
-  constructor(public token: Token<T>) {
-    super(
-      `Some providers for token ${toString(token)} are async, please use injectAsync() or container.getAsync() instead`,
-    );
-  }
 }
