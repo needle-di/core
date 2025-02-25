@@ -28,4 +28,4 @@ const loggerC = child2.get(LOGGER); // `OtherLogger`
 > If you bind a multi-provider in a child container, its singletons will not be merged with those from the parent. This
 > is a current limitation, but if you have a strong use case, feel free to [submit an issue].
 
-[submit an issue]: https://github.com/needle-di/core/issues/new
+[submit an issue]: https://github.com/needle-di/needle-di/issues/new

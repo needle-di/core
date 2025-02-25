@@ -1,5 +1,7 @@
 import { defineConfig } from "vitepress";
-import packageJson from "../../package.json" with { type: "json" };
+
+import packageJson from "../../../package.json" with { type: "json" };
+
 import { JSR_ICON } from "./jsr.icon.js";
 
 // https://vitepress.dev/reference/site-config
@@ -14,7 +16,7 @@ export default defineConfig({
     },
 
     editLink: {
-      pattern: "https://github.com/needle-di/core/edit/main/docs/:path",
+      pattern: "https://github.com/needle-di/needle-di/edit/main/apps/docs/:path",
     },
 
     lastUpdated: {
@@ -32,11 +34,11 @@ export default defineConfig({
             items: [
               {
                 text: `v${packageJson.version}`,
-                link: `https://github.com/needle-di/core/releases/tag/v${packageJson.version}`,
+                link: `https://github.com/needle-di/needle-di/releases/tag/v${packageJson.version}`,
               },
               {
                 text: "Changelog",
-                link: "https://github.com/needle-di/core/releases",
+                link: "https://github.com/needle-di/needle-di/releases",
               },
             ],
           },
@@ -75,7 +77,7 @@ export default defineConfig({
       },
       {
         text: "Changelog",
-        link: "https://github.com/needle-di/core/blob/main/CHANGELOG.md",
+        link: "https://github.com/needle-di/needle-di/blob/main/CHANGELOG.md",
       },
       {
         text: "StackBlitz demo",
@@ -84,7 +86,7 @@ export default defineConfig({
     ],
 
     socialLinks: [
-      { icon: "github", link: "https://github.com/needle-di/core" },
+      { icon: "github", link: "https://github.com/needle-di/needle-di" },
       { icon: "npm", link: "https://www.npmjs.com/package/@needle-di/core" },
       { icon: { svg: JSR_ICON }, link: "https://jsr.io/@needle-di/core" },
     ],
