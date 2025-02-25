@@ -38,6 +38,7 @@ jobs:
         uses: wjervis7/vitest-badge-action@v1.0.0
         with:
           result-type: lines
+          vitest-config-path: 'packages/core/vitest.config.ts'
           gist-token: ${{ secrets.RELEASE_PLEASE_TOKEN }} # if you want to upload badge to gist
           gist-url: https://gist.github.com/dirkluijk/db6fbd0d0d4c138655a89386c5bdbe41
           upload-badge: ${{ github.ref == 'refs/heads/main' }}
