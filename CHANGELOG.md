@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.11.2](https://github.com/needle-di/needle-di/compare/v0.11.1...v0.11.2) (2025-02-25)
+
+
+### Documentation
+
+* restore README for NPM and JSR ([3caae70](https://github.com/needle-di/needle-di/commit/3caae7037099ea3d4070473fe1d81161e8b9dec8))
+
 ## [0.11.1](https://github.com/needle-di/needle-di/compare/v0.11.0...v0.11.1) (2025-02-25)
 
 
