@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.11.1](https://github.com/needle-di/needle-di/compare/v0.11.0...v0.11.1) (2025-02-25)
+
+
+### Miscellaneous Chores
+
+* fixing release ([e3ca018](https://github.com/needle-di/needle-di/commit/e3ca01833e76aa8062d5e3c1cb89acd62e47ab35))
+* transform repository into monorepo with Turbo ([#69](https://github.com/needle-di/needle-di/issues/69)) ([c753a66](https://github.com/needle-di/needle-di/commit/c753a66337d73ee8334e7710a757f414f069eb7c))
+
 ## [0.11.0](https://github.com/needle-di/core/compare/v0.10.1...v0.11.0) (2025-02-23)
 
 
