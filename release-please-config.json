@@ -14,10 +14,14 @@
           "type": "json",
           "path": "packages/core/jsr.json",
           "jsonpath": "$.version"
+        },
+        {
+          "type": "json",
+          "path": "packages/core/package.json",
+          "jsonpath": "$.version"
         }
       ]
     }
   },
-  "plugins": ["node-workspace"],
   "$schema": "https://raw.githubusercontent.com/googleapis/release-please/main/schemas/config.json"
 }
