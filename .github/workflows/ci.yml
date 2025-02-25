@@ -82,12 +82,10 @@ jobs:
           key: deno_dir
 
       - name: 'deno check'
-        run: deno check src/**/*.ts
+        run: deno check packages/**/src/**/*.ts
 
       - name: 'deno lint'
         run: deno run lint
 
       - name: 'deno test'
-        # todo: use "deno run test:ci" when released:
-        # https://github.com/denoland/deno/pull/26836
-        run: deno run test
+        run: deno run test:ci
