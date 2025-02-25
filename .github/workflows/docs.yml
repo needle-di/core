@@ -43,13 +43,13 @@ jobs:
       - name: 'npm ci'
         run: npm ci
 
-      - name: 'npm run docs:build'
-        run: npm run docs:build
+      - name: 'npm run build -w apps/docs'
+        run: npm run build -w apps/docs
 
       - name: 'Upload artifact for Pages'
         uses: actions/upload-pages-artifact@v3
         with:
-          path: docs/.vitepress/dist
+          path: apps/docs/.vitepress/dist
 
   deploy:
     name: 'Deploy docs'
