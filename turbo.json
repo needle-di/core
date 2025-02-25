@@ -13,7 +13,10 @@
       "dependsOn": ["^check-types"]
     },
     "test": {
-      "dependsOn": ["build", "^test"]
+      "dependsOn": ["^test"]
+    },
+    "test:ci": {
+      "dependsOn": ["^test:ci"]
     },
     "build": {
       "dependsOn": ["^build"],
