@@ -38,6 +38,9 @@ jobs:
         uses: wjervis7/vitest-badge-action@v1.0.0
         with:
           result-type: lines
+          # todo: support multiple workspaces
+          vitest-config-path: 'packages/core/vitest.config.ts'
+          summary-path: './packages/core/coverage/coverage-summary.json'
           gist-token: ${{ secrets.RELEASE_PLEASE_TOKEN }} # if you want to upload badge to gist
           gist-url: https://gist.github.com/dirkluijk/db6fbd0d0d4c138655a89386c5bdbe41
           upload-badge: ${{ github.ref == 'refs/heads/main' }}
@@ -79,12 +82,10 @@ jobs:
           key: deno_dir
 
       - name: 'deno check'
-        run: deno check src/**/*.ts
+        run: deno check packages/**/src/**/*.ts
 
       - name: 'deno lint'
         run: deno run lint
 
       - name: 'deno test'
-        # todo: use "deno run test:ci" when released:
-        # https://github.com/denoland/deno/pull/26836
-        run: deno run test
+        run: deno run test:ci

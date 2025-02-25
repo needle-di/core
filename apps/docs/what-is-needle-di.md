@@ -79,4 +79,4 @@ uses stage 3 decorators, to push for ECMAScript standards.
 
 There is currently no roadmap, but we will consider every feature request.
 
-Please [submit a ticket](https://github.com/needle-di/core/issues/new), and we'd like to discuss a fitting solution.
+Please [submit a ticket](https://github.com/needle-di/needle-di/issues/new), and we'd like to discuss a fitting solution.

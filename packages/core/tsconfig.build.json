@@ -1,5 +1,5 @@
 {
-  "extends": ["./tsconfig.base.json"],
+  "extends": ["../../tsconfig.base.json"],
   "compilerOptions": {
     "noCheck": true,
     "noEmit": false,
@@ -10,10 +10,6 @@
     "sourceMap": true,
     "outDir": "dist"
   },
-  "include": [
-    "./src/**/*.ts"
-  ],
-  "exclude": [
-    "./src/**/*.test.ts"
-  ],
+  "include": ["./src/**/*.ts"],
+  "exclude": ["./src/**/*.test.ts"]
 }
