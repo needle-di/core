@@ -14,6 +14,11 @@
           "type": "json",
           "path": "packages/core/jsr.json",
           "jsonpath": "$.version"
+        },
+        {
+          "type": "json",
+          "path": "packages/core/package.json",
+          "jsonpath": "$.version"
         }
       ]
     }
