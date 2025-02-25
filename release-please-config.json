@@ -12,11 +12,12 @@
       "extra-files": [
         {
           "type": "json",
-          "path": "jsr.json",
+          "path": "packages/core/jsr.json",
           "jsonpath": "$.version"
         }
       ]
     }
   },
+  "plugins": ["node-workspace"],
   "$schema": "https://raw.githubusercontent.com/googleapis/release-please/main/schemas/config.json"
 }

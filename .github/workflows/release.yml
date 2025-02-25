@@ -47,6 +47,6 @@ jobs:
 
       - name: 'npm publish (if release)'
         if: ${{ steps.release.outputs.release_created }}
-        run: npm publish
+        run: npm publish --workspace 'packages/**'
         env:
           NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
