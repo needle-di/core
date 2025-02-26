@@ -1,37 +1,18 @@
 {
   "name": "@needle-di/needle-di",
+  "type": "module",
   "version": "0.11.2",
   "description": "A simple TypeScript library for dependency injection",
   "license": "MIT",
-  "keywords": [
-    "dependency injection",
-    "di",
-    "dependency",
-    "injection",
-    "typescript",
-    "type-safe"
-  ],
-  "homepage": "https://needle-di.io",
-  "author": {
-    "name": "Dirk Luijk",
-    "email": "mail@dirkluijk.nl"
-  },
-  "private": false,
+  "private": true,
   "publishConfig": {
-    "access": "public"
+    "access": "restricted"
   },
+  "homepage": "https://needle-di.io",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/needle-di/needle-di.git"
   },
-  "type": "module",
-  "module": "./dist/index.js",
-  "exports": "./dist/index.js",
-  "types": "./dist/index.d.ts",
-  "sideEffects": false,
-  "files": [
-    "./dist/**/**"
-  ],
   "scripts": {
     "dev": "turbo dev",
     "check-types": "turbo check-types",
